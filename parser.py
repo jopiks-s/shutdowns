@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Dict
 import aiohttp
 import asyncio
@@ -15,11 +16,13 @@ address_t = "Куренівська вул"
 house_number_t = "14а"
 
 domain = urllib.parse.urlparse("https://www.dtek-kem.com.ua")
+site_access = False
+token = {"incap_ses_1104_2224657": "MjjOeQjXkwzsFnIK7zJSD9npu2MAAAAA7kUp322DpyJk6HLC+CNwww=="}
 
-test_str = '"data":{"1":{"1":{"1":"no","2":"no","3":"no","4":"no","5":"yes","6":"yes","7":"maybe","8":"maybe","9":"maybe","10":"no","11":"no","12":"no","13":"no","14":"yes","15":"yes","16":"maybe","17":"maybe","18":"maybe","19":"no","20":"no","21":"no","22":"no","23":"yes","24":"yes"},"2":{"1":"maybe","2":"maybe","3":"maybe","4":"no","5":"no","6":"no","7":"no","8":"yes","9":"yes","10":"maybe","11":"maybe","12":"maybe","13":"no","14":"no","15":"no","16":"no","17":"yes","18":"yes","19":"maybe","20":"maybe","21":"maybe","22":"no","23":"no","24":"no"},"3":{"1":"no","2":"yes","3":"yes","4":"maybe","5":"maybe","6":"maybe","7":"no","8":"no","9":"no","10":"no","11":"yes","12":"yes","13":"maybe","14":"maybe","15":"maybe","16":"no","17":"no","18":"no","19":"no","20":"yes","21":"yes","22":"maybe","23":"maybe","24":"maybe"},"4":{"1":"no","2":"no","3":"no","4":"no","5":"yes","6":"yes","7":"maybe","8":"maybe","9":"maybe","10":"no","11":"no","12":"no","13":"no","14":"yes","15":"yes","16":"maybe","17":"maybe","18":"maybe","19":"no","20":"no","21":"no","22":"no","23":"yes","24":"yes"},"5":{"1":"maybe","2":"maybe","3":"maybe","4":"no","5":"no","6":"no","7":"no","8":"yes","9":"yes","10":"maybe","11":"maybe","12":"maybe","13":"no","14":"no","15":"no","16":"no","17":"yes","18":"yes","19":"maybe","20":"maybe","21":"maybe","22":"no","23":"no","24":"no"},"6":{"1":"no","2":"yes","3":"yes","4":"maybe","5":"maybe","6":"maybe","7":"no","8":"no","9":"no","10":"no","11":"yes","12":"yes","13":"maybe","14":"maybe","15":"maybe","16":"no","17":"no","18":"no","19":"no","20":"yes","21":"yes","22":"maybe","23":"maybe","24":"maybe"},"7":{"1":"no","2":"no","3":"no","4":"no","5":"yes","6":"yes","7":"maybe","8":"maybe","9":"maybe","10":"no","11":"no","12":"no","13":"no","14":"yes","15":"yes","16":"maybe","17":"maybe","18":"maybe","19":"no","20":"no","21":"no","22":"no","23":"yes","24":"yes"}},"2":{"1":{"1":"maybe","2":"maybe","3":"maybe","4":"no","5":"no","6":"no","7":"no","8":"yes","9":"yes","10":"maybe","11":"maybe","12":"maybe","13":"no","14":"no","15":"no","16":"no","17":"yes","18":"yes","19":"maybe","20":"maybe","21":"maybe","22":"no","23":"no","24":"no"},"2":{"1":"no","2":"yes","3":"yes","4":"maybe","5":"maybe","6":"maybe","7":"no","8":"no","9":"no","10":"no","11":"yes","12":"yes","13":"maybe","14":"maybe","15":"maybe","16":"no","17":"no","18":"no","19":"no","20":"yes","21":"yes","22":"maybe","23":"maybe","24":"maybe"},"3":{"1":"no","2":"no","3":"no","4":"no","5":"yes","6":"yes","7":"maybe","8":"maybe","9":"maybe","10":"no","11":"no","12":"no","13":"no","14":"yes","15":"yes","16":"maybe","17":"maybe","18":"maybe","19":"no","20":"no","21":"no","22":"no","23":"yes","24":"yes"},"4":{"1":"maybe","2":"maybe","3":"maybe","4":"no","5":"no","6":"no","7":"no","8":"yes","9":"yes","10":"maybe","11":"maybe","12":"maybe","13":"no","14":"no","15":"no","16":"no","17":"yes","18":"yes","19":"maybe","20":"maybe","21":"maybe","22":"no","23":"no","24":"no"},"5":{"1":"no","2":"yes","3":"yes","4":"maybe","5":"maybe","6":"maybe","7":"no","8":"no","9":"no","10":"no","11":"yes","12":"yes","13":"maybe","14":"maybe","15":"maybe","16":"no","17":"no","18":"no","19":"no","20":"yes","21":"yes","22":"maybe","23":"maybe","24":"maybe"},"6":{"1":"no","2":"no","3":"no","4":"no","5":"yes","6":"yes","7":"maybe","8":"maybe","9":"maybe","10":"no","11":"no","12":"no","13":"no","14":"yes","15":"yes","16":"maybe","17":"maybe","18":"maybe","19":"no","20":"no","21":"no","22":"no","23":"yes","24":"yes"},"7":{"1":"maybe","2":"maybe","3":"maybe","4":"no","5":"no","6":"no","7":"no","8":"yes","9":"yes","10":"maybe","11":"maybe","12":"maybe","13":"no","14":"no","15":"no","16":"no","17":"yes","18":"yes","19":"maybe","20":"maybe","21":"maybe","22":"no","23":"no","24":"no"}},"3":{"1":{"1":"no","2":"yes","3":"yes","4":"maybe","5":"maybe","6":"maybe","7":"no","8":"no","9":"no","10":"no","11":"yes","12":"yes","13":"maybe","14":"maybe","15":"maybe","16":"no","17":"no","18":"no","19":"no","20":"yes","21":"yes","22":"maybe","23":"maybe","24":"maybe"},"2":{"1":"no","2":"no","3":"no","4":"no","5":"yes","6":"yes","7":"maybe","8":"maybe","9":"maybe","10":"no","11":"no","12":"no","13":"no","14":"yes","15":"yes","16":"maybe","17":"maybe","18":"maybe","19":"no","20":"no","21":"no","22":"no","23":"yes","24":"yes"},"3":{"1":"maybe","2":"maybe","3":"maybe","4":"no","5":"no","6":"no","7":"no","8":"yes","9":"yes","10":"maybe","11":"maybe","12":"maybe","13":"no","14":"no","15":"no","16":"no","17":"yes","18":"yes","19":"maybe","20":"maybe","21":"maybe","22":"no","23":"no","24":"no"},"4":{"1":"no","2":"yes","3":"yes","4":"maybe","5":"maybe","6":"maybe","7":"no","8":"no","9":"no","10":"no","11":"yes","12":"yes","13":"maybe","14":"maybe","15":"maybe","16":"no","17":"no","18":"no","19":"no","20":"yes","21":"yes","22":"maybe","23":"maybe","24":"maybe"},"5":{"1":"no","2":"no","3":"no","4":"no","5":"yes","6":"yes","7":"maybe","8":"maybe","9":"maybe","10":"no","11":"no","12":"no","13":"no","14":"yes","15":"yes","16":"maybe","17":"maybe","18":"maybe","19":"no","20":"no","21":"no","22":"no","23":"yes","24":"yes"},"6":{"1":"maybe","2":"maybe","3":"maybe","4":"no","5":"no","6":"no","7":"no","8":"yes","9":"yes","10":"maybe","11":"maybe","12":"maybe","13":"no","14":"no","15":"no","16":"no","17":"yes","18":"yes","19":"maybe","20":"maybe","21":"maybe","22":"no","23":"no","24":"no"},"7":{"1":"no","2":"yes","3":"yes","4":"maybe","5":"maybe","6":"maybe","7":"no","8":"no","9":"no","10":"no","11":"yes","12":"yes","13":"maybe","14":"maybe","15":"maybe","16":"no","17":"no","18":"no","19":"no","20":"yes","21":"yes","22":"maybe","23":"maybe","24":"maybe"}}}'
 
+async def site_pending() -> Dict | None:
+    global site_access
 
-async def site_pending(token: Dict) -> Dict | None:
     endpoint = domain._replace(path="/ua/shutdowns")
     data = {}
 
@@ -33,35 +36,67 @@ async def site_pending(token: Dict) -> Dict | None:
             attempt += 1
             if attempt >= 30:
                 print(f"Unable access endpoint: {endpoint.geturl()}, and update data!")
+                site_access = False
                 return None
-            if len(resp.headers) in [6, 8]:
+            if len(resp.headers) in [6, 7, 8]:
+                print(f"Failed attempt n.{attempt}")
                 print(f"Failed request to: {endpoint.geturl()}. Request again...")
                 await asyncio.sleep(1)
             else:
                 break
 
         raw_data = await resp.text()
-        data = json.loads(raw_data[raw_data.rfind('"data"'):raw_data.rfind('}}}}') + 3].replace('"data":', ''))
+        data = raw_data[raw_data.rfind('"data"'):raw_data.rfind('}}}}') + 3].replace('"data":', '')
+        if len(data) == 0:
+            print("Can`t find in response.text() DisconSchedule.preset['data']")
+            site_access = False
+            return None
 
-        return data
+        site_access = True
+        return json.loads(data)
 
-
-async def get_preset(token: Dict) -> Dict:
-    from datetime import datetime
+async def update_preset() -> None:
     from os.path import exists
+    site_data = await site_pending()
+    preset_exists = exists("preset_data.txt")
+
+    if site_data == None:
+        print("Failed to update preset data!")
+        if not preset_exists:
+            with open("preset_data.txt", "w") as file:
+                data = {"preset": None, "update_date": "0/0/0 0h"}
+                json.dump(data, file)
+        return
+
+    if not preset_exists:
+        with open("preset_data.txt", "w") as file:
+            data = {"preset": site_data, "update_date": datetime.now().strftime("%y/%m/%d %Hh")}
+            json.dump(data, file, indent=4)
+    else:
+        with open("preset_data.txt", "r+") as file:
+            data: Dict = json.load(file)
+            data["preset"] = site_data
+            data["update_date"] = datetime.now().strftime("%y/%m/%d %Hh")
+
+            file.seek(0)
+            json.dump(data, file, indent=4)
+
+
+async def get_preset() -> Dict:
 
     data = {}
     if not exists("preset_data.txt"):
-        data = await site_pending(token)
-        with open("preset_data.txt", "w") as file:
-            data = {"preset": data, "update_date": datetime.now().strftime('%ed %Hh').strip()}
-            json.dump(data, file, indent=4)
+        ...
+        # data = await site_pending()
+        # with open("preset_data.txt", "w") as file:
+        #     data = {"preset": data, "update_date": datetime.now().strftime("%y/%m/%d %Hh")}
+        #     json.dump(data, file, indent=4)
     else:
         with open("preset_data.txt") as file:
             file = json.load(file)
-            last_update = file["update_date"]
-            time_diff = datetime.now() - datetime.strptime(last_update, '%dd %Hh')
-            print(time_diff)
+            last_update = datetime.strptime(file["update_date"], '%y/%m/%d %Hh')
+            elapsed_h = str((datetime.now() - last_update)).split(":")[0]
+            print(elapsed_h)
 
     return {}
 
@@ -73,4 +108,4 @@ def get_schedule(address, house_number):
     # week = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
 
-asyncio.run(get_preset({"incap_ses_1104_2224657": "JQxxALeLHSRN9OUI7zJSD4RGuWMAAAAAEq7fd/+sV7bXS8SOVHUaFQ=="}))
+asyncio.run(get_preset())
