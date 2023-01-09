@@ -1,3 +1,7 @@
+from typing import Dict
+import aiohttp
+import asyncio
+import json
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -7,64 +11,66 @@ import time
 import requests
 import urllib.parse
 
+address_t = "Куренівська вул"
+house_number_t = "14а"
+
+domain = urllib.parse.urlparse("https://www.dtek-kem.com.ua")
+
+test_str = '"data":{"1":{"1":{"1":"no","2":"no","3":"no","4":"no","5":"yes","6":"yes","7":"maybe","8":"maybe","9":"maybe","10":"no","11":"no","12":"no","13":"no","14":"yes","15":"yes","16":"maybe","17":"maybe","18":"maybe","19":"no","20":"no","21":"no","22":"no","23":"yes","24":"yes"},"2":{"1":"maybe","2":"maybe","3":"maybe","4":"no","5":"no","6":"no","7":"no","8":"yes","9":"yes","10":"maybe","11":"maybe","12":"maybe","13":"no","14":"no","15":"no","16":"no","17":"yes","18":"yes","19":"maybe","20":"maybe","21":"maybe","22":"no","23":"no","24":"no"},"3":{"1":"no","2":"yes","3":"yes","4":"maybe","5":"maybe","6":"maybe","7":"no","8":"no","9":"no","10":"no","11":"yes","12":"yes","13":"maybe","14":"maybe","15":"maybe","16":"no","17":"no","18":"no","19":"no","20":"yes","21":"yes","22":"maybe","23":"maybe","24":"maybe"},"4":{"1":"no","2":"no","3":"no","4":"no","5":"yes","6":"yes","7":"maybe","8":"maybe","9":"maybe","10":"no","11":"no","12":"no","13":"no","14":"yes","15":"yes","16":"maybe","17":"maybe","18":"maybe","19":"no","20":"no","21":"no","22":"no","23":"yes","24":"yes"},"5":{"1":"maybe","2":"maybe","3":"maybe","4":"no","5":"no","6":"no","7":"no","8":"yes","9":"yes","10":"maybe","11":"maybe","12":"maybe","13":"no","14":"no","15":"no","16":"no","17":"yes","18":"yes","19":"maybe","20":"maybe","21":"maybe","22":"no","23":"no","24":"no"},"6":{"1":"no","2":"yes","3":"yes","4":"maybe","5":"maybe","6":"maybe","7":"no","8":"no","9":"no","10":"no","11":"yes","12":"yes","13":"maybe","14":"maybe","15":"maybe","16":"no","17":"no","18":"no","19":"no","20":"yes","21":"yes","22":"maybe","23":"maybe","24":"maybe"},"7":{"1":"no","2":"no","3":"no","4":"no","5":"yes","6":"yes","7":"maybe","8":"maybe","9":"maybe","10":"no","11":"no","12":"no","13":"no","14":"yes","15":"yes","16":"maybe","17":"maybe","18":"maybe","19":"no","20":"no","21":"no","22":"no","23":"yes","24":"yes"}},"2":{"1":{"1":"maybe","2":"maybe","3":"maybe","4":"no","5":"no","6":"no","7":"no","8":"yes","9":"yes","10":"maybe","11":"maybe","12":"maybe","13":"no","14":"no","15":"no","16":"no","17":"yes","18":"yes","19":"maybe","20":"maybe","21":"maybe","22":"no","23":"no","24":"no"},"2":{"1":"no","2":"yes","3":"yes","4":"maybe","5":"maybe","6":"maybe","7":"no","8":"no","9":"no","10":"no","11":"yes","12":"yes","13":"maybe","14":"maybe","15":"maybe","16":"no","17":"no","18":"no","19":"no","20":"yes","21":"yes","22":"maybe","23":"maybe","24":"maybe"},"3":{"1":"no","2":"no","3":"no","4":"no","5":"yes","6":"yes","7":"maybe","8":"maybe","9":"maybe","10":"no","11":"no","12":"no","13":"no","14":"yes","15":"yes","16":"maybe","17":"maybe","18":"maybe","19":"no","20":"no","21":"no","22":"no","23":"yes","24":"yes"},"4":{"1":"maybe","2":"maybe","3":"maybe","4":"no","5":"no","6":"no","7":"no","8":"yes","9":"yes","10":"maybe","11":"maybe","12":"maybe","13":"no","14":"no","15":"no","16":"no","17":"yes","18":"yes","19":"maybe","20":"maybe","21":"maybe","22":"no","23":"no","24":"no"},"5":{"1":"no","2":"yes","3":"yes","4":"maybe","5":"maybe","6":"maybe","7":"no","8":"no","9":"no","10":"no","11":"yes","12":"yes","13":"maybe","14":"maybe","15":"maybe","16":"no","17":"no","18":"no","19":"no","20":"yes","21":"yes","22":"maybe","23":"maybe","24":"maybe"},"6":{"1":"no","2":"no","3":"no","4":"no","5":"yes","6":"yes","7":"maybe","8":"maybe","9":"maybe","10":"no","11":"no","12":"no","13":"no","14":"yes","15":"yes","16":"maybe","17":"maybe","18":"maybe","19":"no","20":"no","21":"no","22":"no","23":"yes","24":"yes"},"7":{"1":"maybe","2":"maybe","3":"maybe","4":"no","5":"no","6":"no","7":"no","8":"yes","9":"yes","10":"maybe","11":"maybe","12":"maybe","13":"no","14":"no","15":"no","16":"no","17":"yes","18":"yes","19":"maybe","20":"maybe","21":"maybe","22":"no","23":"no","24":"no"}},"3":{"1":{"1":"no","2":"yes","3":"yes","4":"maybe","5":"maybe","6":"maybe","7":"no","8":"no","9":"no","10":"no","11":"yes","12":"yes","13":"maybe","14":"maybe","15":"maybe","16":"no","17":"no","18":"no","19":"no","20":"yes","21":"yes","22":"maybe","23":"maybe","24":"maybe"},"2":{"1":"no","2":"no","3":"no","4":"no","5":"yes","6":"yes","7":"maybe","8":"maybe","9":"maybe","10":"no","11":"no","12":"no","13":"no","14":"yes","15":"yes","16":"maybe","17":"maybe","18":"maybe","19":"no","20":"no","21":"no","22":"no","23":"yes","24":"yes"},"3":{"1":"maybe","2":"maybe","3":"maybe","4":"no","5":"no","6":"no","7":"no","8":"yes","9":"yes","10":"maybe","11":"maybe","12":"maybe","13":"no","14":"no","15":"no","16":"no","17":"yes","18":"yes","19":"maybe","20":"maybe","21":"maybe","22":"no","23":"no","24":"no"},"4":{"1":"no","2":"yes","3":"yes","4":"maybe","5":"maybe","6":"maybe","7":"no","8":"no","9":"no","10":"no","11":"yes","12":"yes","13":"maybe","14":"maybe","15":"maybe","16":"no","17":"no","18":"no","19":"no","20":"yes","21":"yes","22":"maybe","23":"maybe","24":"maybe"},"5":{"1":"no","2":"no","3":"no","4":"no","5":"yes","6":"yes","7":"maybe","8":"maybe","9":"maybe","10":"no","11":"no","12":"no","13":"no","14":"yes","15":"yes","16":"maybe","17":"maybe","18":"maybe","19":"no","20":"no","21":"no","22":"no","23":"yes","24":"yes"},"6":{"1":"maybe","2":"maybe","3":"maybe","4":"no","5":"no","6":"no","7":"no","8":"yes","9":"yes","10":"maybe","11":"maybe","12":"maybe","13":"no","14":"no","15":"no","16":"no","17":"yes","18":"yes","19":"maybe","20":"maybe","21":"maybe","22":"no","23":"no","24":"no"},"7":{"1":"no","2":"yes","3":"yes","4":"maybe","5":"maybe","6":"maybe","7":"no","8":"no","9":"no","10":"no","11":"yes","12":"yes","13":"maybe","14":"maybe","15":"maybe","16":"no","17":"no","18":"no","19":"no","20":"yes","21":"yes","22":"maybe","23":"maybe","24":"maybe"}}}'
 
 
-chromedriver = r"chromedriver\chromedriver.exe"
+async def site_pending(token: Dict) -> Dict | None:
+    endpoint = domain._replace(path="/ua/shutdowns")
+    data = {}
 
-address = "Куренівська вул"
-house_number = "14а"
+    # TODO replace print to logging
+    async with aiohttp.ClientSession() as sess:
+        sess.cookie_jar.update_cookies(token)
+        attempt = 0
+        while True:
+            resp = await sess.get(endpoint.geturl())
+            print(len(resp.headers))
+            attempt += 1
+            if attempt >= 30:
+                print(f"Unable access endpoint: {endpoint.geturl()}, and update data!")
+                return None
+            if len(resp.headers) in [6, 8]:
+                print(f"Failed request to: {endpoint.geturl()}. Request again...")
+                await asyncio.sleep(1)
+            else:
+                break
+
+        raw_data = await resp.text()
+        data = json.loads(raw_data[raw_data.rfind('"data"'):raw_data.rfind('}}}}') + 3].replace('"data":', ''))
+
+        return data
+
+
+async def get_preset(token: Dict) -> Dict:
+    from datetime import datetime
+    from os.path import exists
+
+    data = {}
+    if not exists("preset_data.txt"):
+        data = await site_pending(token)
+        with open("preset_data.txt", "w") as file:
+            data = {"preset": data, "update_date": datetime.now().strftime('%ed %Hh').strip()}
+            json.dump(data, file, indent=4)
+    else:
+        with open("preset_data.txt") as file:
+            file = json.load(file)
+            last_update = file["update_date"]
+            time_diff = datetime.now() - datetime.strptime(last_update, '%dd %Hh')
+            print(time_diff)
+
+    return {}
 
 
 # TODO replace time.sleep() to asyncio.sleep()
 def get_schedule(address, house_number):
-    endpoint = urllib.parse.urlparse("https://www.dtek-kem.com.ua")
-    opts = Options()
-    opts.add_argument(
-        r"user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36")
-    # TODO replace context manager to async version
-    with webdriver.Chrome(executable_path=chromedriver, chrome_options=opts) as driver:
-        try:
-            driver.get(domain)
-            time.sleep(30)
-            street = driver.find_element(By.ID, "street")
-            house_num = driver.find_element(By.ID, "house_num")
+    endpoint = domain._replace(path="ua/ajax")
+    chromedriver = r"chromedriver\chromedriver.exe"
+    # week = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
-            street.send_keys(address)
-            time.sleep(1.5)
-            street.send_keys(Keys.ENTER)
-            time.sleep(1)
-            house_num.send_keys(house_number)
-            time.sleep(1.5)
-            house_num.send_keys(Keys.ENTER)
-            time.sleep(3)
-            source = driver.page_source
 
-            soup = BeautifulSoup(source, "html.parser")
-            rows = soup.find_all("tr")[1:]
-        except Exception as e:
-            print(e)
-            print("Can't load information from site!")
-            return None
-
-        week = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-        schedule = {}
-        for day in week:
-            schedule[day] = []
-
-        shutdowns_periods = [[]]
-
-        for i, row in enumerate(rows):
-            time_range = row.find_next().find("div").text.replace(" – ", "-").split("-")
-            shutdowns_periods[i].append(int(time_range[0].split(":")[0]))
-            shutdowns_periods[i].append(int(time_range[1].split(":")[0]))
-            shutdowns_periods.append([])
-        shutdowns_periods.pop()
-
-        for y, row in enumerate(rows):
-            col = row.find_next().find("div").find_next()
-            for x in range(7):
-                if col["class"][0] == "cell-scheduled":
-                    schedule[week[x]].append(shutdowns_periods[y])
-                col = col.find_next()
-
-        return schedule
+asyncio.run(get_preset({"incap_ses_1104_2224657": "JQxxALeLHSRN9OUI7zJSD4RGuWMAAAAAEq7fd/+sV7bXS8SOVHUaFQ=="}))
