@@ -1,9 +1,9 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Optional, Tuple
 from bot_lib.commands import Commands
 
 
-@dataclass
+@dataclass(frozen=True)
 class MessageFrom:
     id: int
     is_bot: bool
@@ -12,7 +12,7 @@ class MessageFrom:
     username: str
 
 
-@dataclass
+@dataclass(frozen=True)
 class Chat:
     id: int
     type: str
@@ -22,7 +22,7 @@ class Chat:
     title: Optional[str] = None
 
 
-@dataclass
+@dataclass(frozen=True)
 class Message:
     message_id: int
     from_: MessageFrom
@@ -30,16 +30,16 @@ class Message:
     date: int
     text: Optional[str] = None
     command: Optional[Commands] = None
-    parameters: Optional[List[str]] = None
+    parameters: Optional[Tuple[str, ...]] = None
 
 
-@dataclass
+@dataclass(frozen=True)
 class ResultObj:
     update_id: int
     message: Message
 
 
-@dataclass
+@dataclass(frozen=True)
 class GetUpdatesResponse:
     ok: bool
-    result: List[ResultObj]
+    result: Tuple[ResultObj, ...]

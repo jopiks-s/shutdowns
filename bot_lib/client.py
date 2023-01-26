@@ -1,5 +1,5 @@
 import json
-from typing import List
+from typing import List, Tuple, Iterable
 import requests
 import dacite
 from bot_lib import response, commands
@@ -39,15 +39,27 @@ def _add_commands(updates: dict) -> dict:
     return updates
 
 
-def _prettify_updates(updates: dict) -> List[response.ResultObj]:
-    # rename update['message]['from'] key to 'from_' because otherwise dacite can`t parse from_dict to dataclass
-    for i, message in enumerate([update['message'] for update in updates['result']]):
-        copy = {}
-        for k, v in message.items():
-            copy["from_" if k == "from" else k] = v
-        updates['result'][i]['message'] = copy
+def _prettify_updates(updates: dict) -> Tuple[response.ResultObj]:
+    # dacite.from_dict can`t parse key value 'from' to 'from_'
+    def update_message_from_to__from(d):
+        for i, message in enumerate([update['message'] for update in updates['result']]):
+            copy = {}
+            for k, v in message.items():
+                copy["from_" if k == "from" else k] = v
+            updates['result'][i]['message'] = copy
 
+    def lists_to_tuples(d):
+        if isinstance(d, dict):
+            for k, v in d.items():
+                d[k] = lists_to_tuples(v)
+        elif isinstance(d, list):
+            return tuple(lists_to_tuples(i) for i in d)
+
+        return d
+
+    update_message_from_to__from(updates)
     _add_commands(updates)
+    lists_to_tuples(updates)
 
     return dacite.from_dict(response.GetUpdatesResponse, updates).result
 
@@ -59,14 +71,13 @@ class Client:
     def api_url(self, method: str) -> str:
         return f"https://api.telegram.org/bot{self.token}/{method}"
 
-    def poll_updates(self, offset: int, timeout: int) -> List[response.ResultObj]:
+    def poll_updates(self, offset: int, timeout: int) -> Tuple[response.ResultObj]:
         params = {"offset": offset, "timeout": timeout}
         url = self.api_url("getUpdates")
         updates = requests.get(url, params=params).json()
         print(json.dumps(updates, indent=4))
 
         return _prettify_updates(updates)
-
 
     # Debug version
     def send_message(self, chat_id, text) -> dict:
