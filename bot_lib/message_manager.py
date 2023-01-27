@@ -17,4 +17,4 @@ class MessageManager:
 
     # start [n] threads
     def start(self, executor: ThreadPoolExecutor, n):
-        [executor.submit(self._worker(i)) for i in range(n)]
+        [executor.submit(self._worker, f"worker{i}") for i in range(n)]
