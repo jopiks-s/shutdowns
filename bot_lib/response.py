@@ -1,5 +1,5 @@
-from dataclasses import dataclass
-from typing import List, Optional, Tuple
+from dataclasses import dataclass, field
+from typing import Optional, Tuple
 from bot_lib.commands import Commands
 
 
@@ -30,7 +30,7 @@ class Message:
     date: int
     text: Optional[str] = None
     command: Optional[Commands] = None
-    parameters: Optional[Tuple[str, ...]] = None
+    parameters: Tuple[str, ...] = field(default_factory=lambda: [])
 
 
 @dataclass(frozen=True)

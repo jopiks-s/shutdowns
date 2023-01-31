@@ -1,37 +1,26 @@
 import json
-from typing import List, Tuple, Iterable
-import requests
+from typing import Tuple
+
 import dacite
-from bot_lib import response, commands
-from dataclasses import asdict
+import requests
+
+from bot_lib import response
+from bot_lib.commands import Commands
+from log.logger import logger
 
 
 def _add_commands(updates: dict) -> dict:
     # regular finding command and parameters
-    for update in updates['result']:
-        message = update['message']
-        if 'text' not in message.keys():
-            return updates
+    for update in updates.get('result', []):
+        message = update.get('message', {})
+        text: str = message.get('text', "").strip()
+        command, parameters = None, []
 
-        text: str = message['text'].strip()
-        command = None
-        parameters = []
-
-        for i, s in enumerate(text.split(" ")):
-            if i == 0:
-                if len(s) > 1 and s[0] == '/':
-                    print("enter to parsing")
-                    command = s[1:]
-                    if not hasattr(commands.Commands, command):
-                        command = None
-                        break
-                    command = commands.Commands[command]
-                    continue
-                else:
-                    break
-
-            if len(s) > 0:
-                parameters.append(s)
+        if text and text[0] == "/":
+            command = text.split(" ")[0][1:]
+            if getattr(Commands, command, None):
+                command = Commands(command)
+                parameters = [p for p in text.split(" ")[1:] if p]
 
         message['command'] = command
         message['parameters'] = parameters
@@ -40,13 +29,12 @@ def _add_commands(updates: dict) -> dict:
 
 
 def _prettify_updates(updates: dict) -> Tuple[response.ResultObj]:
-    # dacite.from_dict can`t parse key value 'from' to 'from_'
     def update_message_from_to__from(d):
-        for i, message in enumerate([update['message'] for update in updates['result']]):
-            copy = {}
-            for k, v in message.items():
-                copy["from_" if k == "from" else k] = v
-            updates['result'][i]['message'] = copy
+        """
+        dacite.from_dict can`t parse key value 'from' to 'from_'
+        """
+        for update in d['result']:
+            update['message']['from_'] = update['message'].pop('from', None)
 
     def lists_to_tuples(d):
         if isinstance(d, dict):
@@ -75,7 +63,7 @@ class Client:
         params = {"offset": offset, "timeout": timeout}
         url = self.api_url("getUpdates")
         updates = requests.get(url, params=params).json()
-        print(json.dumps(updates, indent=4))
+        logger.debug(json.dumps(updates, indent=4))
 
         return _prettify_updates(updates)
 
