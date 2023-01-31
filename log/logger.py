@@ -1,5 +1,7 @@
 import logging
 
+from log.ColorFormatter import ColorFormatter
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
@@ -13,7 +15,10 @@ file_handler.setFormatter(logging.Formatter(
 con_handler = logging.StreamHandler()
 con_handler.setLevel(logging.DEBUG)
 con_handler.setFormatter(
-    logging.Formatter("%(asctime)s,%(msecs)d %(levelname)s %(filename)s->%(funcName)s() %(message)s", "%H:%M:%S"))
+    ColorFormatter(fmt="%(asctime)s,%(msecs)d %(levelname)s %(filename)s->%(funcName)s() %(message)s",
+                   datefmt="%H:%M:%S"))
 
 logger.addHandler(file_handler)
 logger.addHandler(con_handler)
+
+# TODO add logging for exceptions
