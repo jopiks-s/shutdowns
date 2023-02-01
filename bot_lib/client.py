@@ -13,14 +13,18 @@ def _add_commands(updates: dict) -> dict:
     # regular finding command and parameters
     for update in updates.get('result', []):
         message = update.get('message', {})
-        text: str = message.get('text', "").strip()
+        text: str = message.get('text', "")
         command, parameters = None, []
 
-        if text and text[0] == "/":
-            command = text.split(" ")[0][1:]
-            if getattr(Commands, command, None):
-                command = Commands(command)
-                parameters = [p for p in text.split(" ")[1:] if p]
+        for entity in message.get('entities', []):
+            if entity.get('type', '') == 'bot_command' and entity.get('offset', -1) == 0:
+                command = text[1:entity.get('length', 0)]
+                command = getattr(Commands, command, None)
+                if command:
+                    command = Commands(command)
+                    parameters = [p for p in text.split(" ")[1:] if p]
+
+            break
 
         message['command'] = command
         message['parameters'] = parameters

@@ -1,6 +1,6 @@
 import logging
 
-from log.ColorFormatter import ColorFormatter
+from log.colorFormatter import ColorFormatter
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)

@@ -6,7 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from bot_lib import response
 from bot_lib.client import Client
-from bot_lib.commands import Commands
+from bot_lib.commands import Commands, CommandsEncoder
 from log.logger import logger
 
 
@@ -19,7 +19,7 @@ class MessageManager:
         logger.info("Started")
         while True:
             message: response.Message = self.client_queue.get()
-            logger.debug((json.dumps(asdict(message), indent=4)))
+            logger.debug((json.dumps(asdict(message), indent=4, cls=CommandsEncoder)))
 
             if not message.command:
                 continue
