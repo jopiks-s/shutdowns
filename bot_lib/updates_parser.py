@@ -1,3 +1,4 @@
+import json
 from dataclasses import is_dataclass
 from typing import Type, get_args, Tuple
 
@@ -49,7 +50,7 @@ def have_required_keys(d: dict, cls: Type) -> bool:
 
 def prettify_updates(updates: dict) -> Tuple[response.ResultObj]:
     def _validate_updates(d):
-        for update in d.get('result', []):
+        for update in d.get('result', [])[:]:
             if update.get('message', None):
                 update['message']['from_'] = update['message'].pop('from', None)
             if not have_required_keys(update, response.ResultObj):

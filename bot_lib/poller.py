@@ -6,7 +6,7 @@ from threading import Thread
 
 from bot_lib.client import Client
 from bot_lib.commands import CommandsEncoder
-from bot_lib.message_parser import prettify_updates
+from bot_lib.updates_parser import prettify_updates
 from log.logger import logger
 
 
@@ -20,20 +20,21 @@ class Poller:
         offset = 0
         timeout = 60
         while True:
+            logger.info(f"pull with offset: {offset}")
             updates = self.client.poll_updates(offset, timeout)
             logger.debug(json.dumps(updates, indent=4))
+
             if not updates['ok']:
                 logger.warning(f"Missing logic for bad response")
                 continue
-
             for update in updates['result']:
                 offset = update.get('update_id', -1) + 1
-                logger.debug(f"offset: {offset}")
 
             updates = prettify_updates(updates)
             for update in updates:
                 logger.debug(json.dumps(asdict(update), indent=4, cls=CommandsEncoder))
                 self.client_queue.put(update.message)
+            logger.debug(f"next offset: {offset}")
 
     # start [1] thread
     def start(self, executor: ThreadPoolExecutor):
