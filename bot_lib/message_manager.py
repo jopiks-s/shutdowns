@@ -1,12 +1,10 @@
-import json
 import queue
-from dataclasses import asdict
-from threading import Thread
 from concurrent.futures import ThreadPoolExecutor
+from threading import Thread
 
 from bot_lib import response
 from bot_lib.client import Client
-from bot_lib.commands import Commands, CommandsEncoder
+from bot_lib.commands import Commands
 from log.logger import logger
 
 
@@ -19,7 +17,6 @@ class MessageManager:
         logger.info("Started")
         while True:
             message: response.Message = self.client_queue.get()
-            logger.debug((json.dumps(asdict(message), indent=4, cls=CommandsEncoder)))
 
             if not message.command:
                 continue
@@ -27,8 +24,8 @@ class MessageManager:
                 ...
             elif message.command == Commands.setschedule:
                 if len(message.parameters) == 0:
-                    logger.info(f"{message.from_.username} send command [{message.command}] without parameters")
-                    logger.info(f"Missing logic for {message.command} if send without params")
+                    logger.debug(f"{message.from_.username} send command [{message.command}] without parameters")
+                    logger.warning(f"Missing logic for {message.command} if send without params")
                     continue
 
                 self.client.send_message(message.chat.id,

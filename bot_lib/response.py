@@ -31,7 +31,7 @@ class Message:
     date: int
     text: Optional[str] = None
     command: Optional[Commands] = None
-    parameters: Tuple[str, ...] = field(default_factory=lambda: [])
+    parameters: Optional[Tuple[str, ...]] = field(default_factory=lambda: [])
 
 
 @dataclass(frozen=True)
