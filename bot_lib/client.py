@@ -18,15 +18,3 @@ class Client:
         payload = {"chat_id": chat_id, "text": text}
         url = self.api_url("sendMessage")
         return requests.post(url, data=payload).json()
-
-# d = {"ok": True, "result": [{"update_id": 930735281,
-#                              "message": {"message_id": 304,
-#                                          "from": {"id": 760317971, "is_bot": False, "first_name": "Ne",
-#                                                   "last_name": "budlo", "username": "Az0npisyarnui",
-#                                                   "language_code": "en"},
-#                                          "chat": {"id": 760317971, "first_name": "Ne", "last_name": "budlo",
-#                                                   "username": "Az0npisyarnui", "type": "private"}, "date": 1675422946,
-#                                          "text": ")"}}]}
-
-
-# TODO move logic of prettifying updates to poller
