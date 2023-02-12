@@ -37,5 +37,5 @@ class Poller:
             logger.debug(f"next offset: {offset}")
 
     # start [1] thread
-    def start(self, executor: ThreadPoolExecutor):
+    def start_threads(self, executor: ThreadPoolExecutor):
         executor.submit(Thread(name="poller0", target=self._poller).start)

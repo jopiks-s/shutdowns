@@ -21,5 +21,5 @@ class Bot:
         Start bot. Will block main thread
         """
         with ThreadPoolExecutor(max_workers=self.threads_n) as executor:
-            self.poller.start(executor)
-            self.message_manager.start(executor, self.threads_n - 1)
+            self.poller.start_threads(executor)
+            self.message_manager.start_threads(executor, self.threads_n - 1)
