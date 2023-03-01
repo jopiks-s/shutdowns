@@ -1,10 +1,12 @@
 import queue
+import threading
 from concurrent.futures import ThreadPoolExecutor
 from threading import Thread
+from collections import defaultdict
 
-from bot_lib import response
-from bot_lib.client import Client
-from bot_lib.commands import Commands
+from bot import response
+from bot.client import Client
+from bot.commands import Commands
 from log.logger import logger
 
 
@@ -12,23 +14,29 @@ class MessageManager:
     def __init__(self, client: Client, client_queue: queue.Queue):
         self.client = client
         self.client_queue = client_queue
-
-    def _worker(self):
-        logger.info("Started")
-        actions = {
+        self.commands = {
             None: self.not_command,
             Commands.start: self.start_command,
             Commands.setschedule: self.setschedule_command
         }
+        self.user_locks = defaultdict(threading.Lock)
+
+    def _worker(self):
+        logger.info("Started")
+
         while True:
             message: response.Message = self.client_queue.get()
-            actions[message.command](message)
+            user_id = message.from_.id
+            lock = self.user_locks[user_id]
+            with lock:
+                self.commands[message.command](message)
 
     # start [n] threads
     def start_threads(self, executor: ThreadPoolExecutor, n):
         [executor.submit(Thread(name=f"worker{i}", target=self._worker).start) for i in range(n)]
 
     def not_command(self, message: response.Message):
+        # time.sleep(random.random()*5)
         self.client.send_message(message.chat.id,
                                  f"Your message: {message.text}")
 

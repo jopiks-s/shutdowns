@@ -4,24 +4,25 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict
 from threading import Thread
 
-from bot_lib.client import Client
-from bot_lib.commands import CommandsEncoder
-from bot_lib.updates_parser import prettify_updates
+from bot.client import Client
+from bot.commands import CommandsEncoder
+from bot.updates_parser import prettify_updates
 from log.logger import logger
 
 
-class Poller:
+class Puller:
     def __init__(self, client: Client, client_queue: queue.Queue):
         self.client = client
         self.client_queue = client_queue
 
-    def _poller(self):
+    def _puller(self):
         logger.info("Started")
         offset = 0
         timeout = 60
         while True:
             logger.info(f"pull with offset: {offset}")
             updates = self.client.poll_updates(offset, timeout)
+
             logger.debug(json.dumps(updates, indent=4))
 
             if not updates['ok']:
@@ -38,4 +39,4 @@ class Poller:
 
     # start [1] thread
     def start_threads(self, executor: ThreadPoolExecutor):
-        executor.submit(Thread(name="poller0", target=self._poller).start)
+        executor.submit(Thread(name="puller0", target=self._puller).start)

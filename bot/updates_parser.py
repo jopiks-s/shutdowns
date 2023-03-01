@@ -1,11 +1,10 @@
-import json
 from dataclasses import is_dataclass
 from typing import Type, get_args, Tuple
 
 import dacite
 
-from bot_lib import response
-from bot_lib.commands import Commands
+from bot import response
+from bot.commands import Commands
 
 
 def add_commands(updates: dict) -> dict:
@@ -38,7 +37,7 @@ def have_required_keys(d: dict, cls: Type) -> bool:
     # print(f"given keys in dict: {d.keys()}")
 
     if not all(key in d for key in required_fields.keys()):
-        # print(f"given dict doesnt have all required keys")
+        # print(f"given dict haven`t all required keys")
         return False
 
     for key, field_type in required_fields.items():

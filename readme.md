@@ -4,12 +4,12 @@ Commands
 2. /viewschedule - render image of switch-off schedule
 
 [params]:
-- group_index: int - index of group
-
-3. /setaddress - add/update user address (mutex by /setgroup). The user selects an address on the map 
-4. /setgroup - add/update user group (mutex by /setgroup)
+- group_index: int
+ 
+3. /setgroup - add/update user group
 
 [params]:
-- group_index: int - index of group
+- group_index: int
 
-5. /notification - enable/disable notifications about upcoming shutdowns
+4. /notification - enable/disable notifications about upcoming shutdowns
+5. /about - information about user settings

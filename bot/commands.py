@@ -4,7 +4,10 @@ from enum import Enum
 
 class Commands(Enum):
     start = 0
-    setschedule = 1
+    viewschedule = 1
+    setgroup = 2
+    notification = 3
+    about = 4
 
 
 class CommandsEncoder(json.JSONEncoder):
