@@ -17,7 +17,6 @@ class Bot:
         self.client_queue = queue.Queue()
         self.poller = Puller(self.client, self.client_queue)
         self.message_manager = MessageHandler(self.client, self.client_queue)
-        mongoengine.connect('tg')
 
     def loop(self) -> None:
         """

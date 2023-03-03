@@ -1,3 +1,4 @@
+import ast
 from dataclasses import is_dataclass
 from typing import Type, get_args, Tuple
 
@@ -14,15 +15,18 @@ def add_commands(updates: dict) -> dict:
         text: str = message.get('text', "")
         command, parameters = None, []
 
-        for entity in message.get('entities', []):
-            if entity.get('type', '') == 'bot_command' and entity.get('offset', -1) == 0:
-                command = text[1:entity.get('length', 0)]
-                command = getattr(Commands, command, None)
-                if command:
-                    command = Commands(command)
-                    parameters = [p for p in text.split(" ")[1:] if p]
-
-            break
+        entity = message.get('entities', [{}])[0]
+        if entity.get('type', '') == 'bot_command' and entity.get('offset', -1) == 0:
+            command = text[1:entity.get('length', 0)]
+            command = getattr(Commands, command, None)
+            if command:
+                command = Commands(command)
+                args = [a for a in text.split(' ')[1:] if a]
+                for arg in args:
+                    try:
+                        parameters.append(ast.literal_eval(arg))
+                    except:
+                        parameters.append(arg)
 
         message['command'] = command
         message['parameters'] = parameters
