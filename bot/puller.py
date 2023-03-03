@@ -7,7 +7,8 @@ from threading import Thread
 from bot.client import Client
 from bot.commands import CommandsEncoder
 from bot.updates_parser import prettify_updates
-from log.logger import logger
+from log import logger
+from log import request_logger
 
 
 class Puller:
@@ -23,7 +24,7 @@ class Puller:
             logger.info(f"pull with offset: {offset}")
             updates = self.client.poll_updates(offset, timeout)
 
-            logger.debug(json.dumps(updates, indent=4))
+            request_logger.info(json.dumps(updates, indent=4))
 
             if not updates['ok']:
                 logger.warning(f"Missing logic for bad response")
@@ -33,7 +34,7 @@ class Puller:
 
             updates = prettify_updates(updates)
             for update in updates:
-                logger.debug(json.dumps(asdict(update), indent=4, cls=CommandsEncoder))
+                request_logger.info(json.dumps(asdict(update), indent=4, cls=CommandsEncoder))
                 self.client_queue.put(update.message)
             logger.debug(f"next offset: {offset}")
 

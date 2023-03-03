@@ -1,10 +1,12 @@
 import queue
 from concurrent.futures import ThreadPoolExecutor
 
+import mongoengine
+
 from bot.client import Client
+from bot.message_handler import MessageHandler
 from bot.puller import Puller
-from bot.message_manager import MessageManager
-from log.logger import logger
+from log import logger
 
 
 class Bot:
@@ -14,7 +16,8 @@ class Bot:
         self.threads_n = max(2, threads_n)
         self.client_queue = queue.Queue()
         self.poller = Puller(self.client, self.client_queue)
-        self.message_manager = MessageManager(self.client, self.client_queue)
+        self.message_manager = MessageHandler(self.client, self.client_queue)
+        mongoengine.connect('tg')
 
     def loop(self) -> None:
         """
