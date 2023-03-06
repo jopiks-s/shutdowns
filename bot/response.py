@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Optional, Tuple, Any
+from typing import Tuple, Any
 
 from bot.commands import Commands
 
@@ -9,7 +9,7 @@ class MessageFrom:
     id: int
     is_bot: bool
     first_name: str
-    last_name: Optional[str]
+    last_name: str | None
     username: str
 
 
@@ -17,10 +17,10 @@ class MessageFrom:
 class Chat:
     id: int
     type: str
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    username: Optional[str] = None
-    title: Optional[str] = None
+    first_name: str | None = None
+    last_name: str | None = None
+    username: str | None = None
+    title: str | None = None
 
 
 @dataclass(frozen=True)
@@ -29,9 +29,9 @@ class Message:
     from_: MessageFrom
     chat: Chat
     date: int
-    text: Optional[str] = None
-    command: Optional[Commands] = None
-    parameters: Optional[Tuple[Any, ...]] = field(default_factory=lambda: [])
+    text: str | None = None
+    command: Commands | None = None
+    parameters: Tuple[Any, ...] | None = field(default_factory=lambda: [])
 
 
 @dataclass(frozen=True)
@@ -44,3 +44,5 @@ class ResultObj:
 class GetUpdatesResponse:
     ok: bool
     result: Tuple[ResultObj, ...]
+
+# todo syntax to 3.11

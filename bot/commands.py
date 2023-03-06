@@ -7,7 +7,8 @@ class Commands(Enum):
     viewschedule = 1
     setgroup = 2
     notification = 3
-    about = 4
+    info = 4
+    about = 5
 
 
 class CommandsEncoder(json.JSONEncoder):

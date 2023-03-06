@@ -12,4 +12,5 @@ Commands
 - group_index: int
 
 4. /notification - enable/disable notifications about upcoming shutdowns
-5. /about - information about user settings
+5. /info - information about user settings
+6. /about - copy of start message
