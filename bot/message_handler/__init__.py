@@ -4,9 +4,8 @@ from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from threading import Thread
 
-from bot import response
-from bot.client import Client
-from bot.commands import Commands
+from bot.client import Client, response
+from bot.client.commands import Commands
 from log import logger
 
 

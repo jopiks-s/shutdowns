@@ -5,8 +5,8 @@ from dataclasses import asdict
 from threading import Thread
 
 from bot.client import Client
-from bot.commands import CommandsEncoder
-from bot.updates_parser import prettify_updates
+from bot.client.commands import CommandsEncoder
+from bot.client.updates_parser import prettify_updates
 from log import logger
 from log import request_logger
 

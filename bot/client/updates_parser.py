@@ -4,8 +4,8 @@ from typing import Type, get_args, Tuple
 
 import dacite
 
-from bot import response
-from bot.commands import Commands
+from bot.client import response
+from bot.client.commands import Commands
 
 
 def add_commands(updates: dict) -> dict:

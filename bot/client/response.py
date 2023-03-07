@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Tuple, Any
 
-from bot.commands import Commands
+from bot.client.commands import Commands
 
 
 @dataclass(frozen=True)
