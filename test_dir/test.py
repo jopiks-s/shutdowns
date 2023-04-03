@@ -1,10 +1,7 @@
 import asyncio
+
 import aiohttp
 from aiohttp import ClientSession
-
-import codecs
-
-from yarl import URL
 from bs4 import BeautifulSoup
 
 domain = "https://www.dtek-kem.com.ua/"
@@ -13,15 +10,14 @@ domain = "https://www.dtek-kem.com.ua/"
 async def request_site(url: str) -> None:
     async with ClientSession() as session:
         session.cookie_jar.update_cookies(
-            {"incap_ses_1104_2224657": "wpWGcQLVZXqend0I7zJSD1M7uWMAAAAAkU3e0EyXGWTyCcty5m8BFg"})
+            {"incap_ses_471_2224657": "mS29Z4IQJRQpozYH3FSJBnMRB2QAAAAAT/SaSFMZsJ2eApKNf499gQ=="})
 
         print(f"req {0} cookies:")
         for cookie in session.cookie_jar:
             print(cookie)
         print("\n")
-        resp = await session.get(url)
-        print(session.connector._conns)
 
+        resp = await session.get(url)
         await print_request(session, resp, 0)
 
 
@@ -46,5 +42,4 @@ async def print_request(session: aiohttp.ClientSession, resp: aiohttp.ClientResp
 
 if __name__ == "__main__":
     path = ["/ua/shutdowns", "/ua/ajax"][0]
-    # asyncio.run(request_site(domain+path))
     asyncio.run(request_site("https://www.dtek-kem.com.ua/ua/shutdowns"))

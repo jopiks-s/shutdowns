@@ -4,8 +4,7 @@ from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from threading import Thread
 
-from bot.client import Client, response
-from bot.client.commands import Commands
+from bot.botAPI import BotAPI, Commands
 from log import logger
 
 
@@ -17,7 +16,7 @@ class MessageHandler:
     from ._commands_handler import info_command
     from ._commands_handler import about_command
 
-    def __init__(self, client: Client, client_queue: queue.Queue):
+    def __init__(self, client: BotAPI, client_queue: queue.Queue):
         self.client = client
         self.client_queue = client_queue
         self.commands = {

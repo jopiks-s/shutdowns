@@ -1,0 +1,42 @@
+<mxfile host="Electron" modified="2023-04-03T11:55:09.063Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.1.2 Chrome/106.0.5249.199 Electron/21.4.3 Safari/537.36" etag="lyyb1DzY7iE5lg7pJZRp" version="21.1.2" type="device">
+  <diagram name="Page-1" id="KMIJu9SUoFddjLStjRd3">
+    <mxGraphModel dx="1500" dy="956" grid="1" gridSize="14" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2000" pageHeight="2000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="hPBPj24CmlkM587IV644-1" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;BOT&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1058" y="168" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="hPBPj24CmlkM587IV644-4" value="" style="endArrow=none;html=1;rounded=0;align=center;verticalAlign=top;endFill=0;labelBackgroundColor=none;endSize=2;" edge="1" source="hPBPj24CmlkM587IV644-12" target="hPBPj24CmlkM587IV644-5" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="180" y="235" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hPBPj24CmlkM587IV644-5" value="" style="ellipse;html=1;fontSize=11;align=center;fillColor=none;points=[];aspect=fixed;resizable=0;verticalAlign=bottom;labelPosition=center;verticalLabelPosition=top;flipH=1;" vertex="1" parent="1">
+          <mxGeometry x="202" y="262" width="8" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="hPBPj24CmlkM587IV644-7" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;MessageHandler&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1108" y="317" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="hPBPj24CmlkM587IV644-8" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;Puller&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="948" y="317" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="hPBPj24CmlkM587IV644-9" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;client_queue&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=11;fontColor=default;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="938" y="447" width="310" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="hPBPj24CmlkM587IV644-10" value="" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=11;fontColor=default;dashed=1;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="238" y="126" width="406" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="hPBPj24CmlkM587IV644-11" value="BotAPI" style="html=1;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="266" y="154" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="hPBPj24CmlkM587IV644-12" value="TelegramAPI" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=11;fontColor=default;" vertex="1" parent="1">
+          <mxGeometry x="42" y="226" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="hPBPj24CmlkM587IV644-13" value="Commands" style="html=1;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="294" y="241" width="110" height="50" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

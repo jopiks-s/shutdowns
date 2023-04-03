@@ -2,7 +2,7 @@ import re
 from codecs import decode
 
 
-def unicode_escape(s):
+def unicode_escape(s) -> str:
     # https://stackoverflow.com/questions/4020539/process-escape-sequences-in-a-string-in-python#24519338
     escape_pattern = re.compile(r'''
             ( \\U........      # 8-digit hex escapes
@@ -15,8 +15,6 @@ def unicode_escape(s):
     return escape_pattern.sub(lambda m: decode(m.group(), 'unicode-escape'), s)
 
 
-if __name__ == "__main__":
-    with open("resp.txt", "r", encoding="utf-8") as raw_file, open("escaped_unicode.txt", "w", encoding="utf-8") as u_file:
-        for line in raw_file.readlines():
-            u_file.write(unicode_escape(line))
-
+with open("resp.txt", "r", encoding="utf-8") as raw_file, open("resp_decoded.txt", "w", encoding="utf-8") as u_file:
+    for line in raw_file.readlines():
+        u_file.write(unicode_escape(line))

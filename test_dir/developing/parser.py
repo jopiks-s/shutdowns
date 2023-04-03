@@ -57,23 +57,23 @@ async def site_pending() -> Dict | None:
 
 async def update_preset() -> bool:
     site_data = await site_pending()
-    preset_exists = exists("preset_data.txt")
+    preset_exists = exists("../../bot/preset_data.txt")
     curr_date = datetime.now().strftime("%Y/%m/%d %Hh")
 
     if site_data == None:
         print("Failed to update preset data!")
         if not preset_exists:
-            with open("preset_data.txt", "w") as file:
+            with open("../../bot/preset_data.txt", "w") as file:
                 data = {"preset": {}, "update_date": curr_date}
                 json.dump(data, file, indent=4)
         return False
 
     if not preset_exists:
-        with open("preset_data.txt", "w") as file:
+        with open("../../bot/preset_data.txt", "w") as file:
             data = {"preset": site_data, "update_date": curr_date}
             json.dump(data, file, indent=4)
     else:
-        with open("preset_data.txt", "r+") as file:
+        with open("../../bot/preset_data.txt", "r+") as file:
             data: Dict = json.load(file)
             data["preset"] = site_data
             data["update_date"] = datetime.now().strftime("%Y/%m/%d %Hh")
@@ -86,9 +86,9 @@ async def update_preset() -> bool:
 
 async def get_preset() -> Dict:
     data = {}
-    if not exists("preset_data.txt"):
+    if not exists("../../bot/preset_data.txt"):
         await update_preset()
-    with open("preset_data.txt", "r") as file:
+    with open("../../bot/preset_data.txt", "r") as file:
         preset_data = json.load(file)
         last_update = datetime.strptime(preset_data["update_date"], "%Y/%m/%d %Hh")
         elapsed_h = (datetime.now() - last_update).seconds // 3600

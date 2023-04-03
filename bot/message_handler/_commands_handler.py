@@ -1,10 +1,9 @@
 from bot import db
-from bot.client import response
+from bot.botAPI import response
 from log import logger
 
 
 def not_command(self, message: response.Message):
-    # time.sleep(random.random()*5)
     self.client.send_message(message.chat.id,
                              f"[DEBUG] Your message: {message.text}")
 
