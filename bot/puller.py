@@ -18,6 +18,8 @@ class Puller:
         while True:
             logger.info(f"pull with offset: {offset}")
             updates = self.client.get_updates(offset, timeout)
+            if not updates:
+                continue
             offset = updates.last_update_id + 1
             for update in updates.messages:
                 self.client_queue.put(update)

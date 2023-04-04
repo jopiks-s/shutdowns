@@ -48,5 +48,6 @@ class GetUpdatesResponse:
 
 @dataclass(frozen=True)
 class Updates:
+    """this is the final processed class of received messages from the users"""
     messages: Tuple[Message, ...]
     last_update_id: int

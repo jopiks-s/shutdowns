@@ -1,12 +1,11 @@
 import ast
+import json
 from dataclasses import is_dataclass
-from typing import Type, get_args, Tuple
+from typing import Type, get_args, Tuple, Any
 
 import dacite
-import json
 
-from bot.botAPI import response
-from bot.botAPI._commands import Commands
+from . import Commands, response
 
 
 def _add_commands(updates: dict) -> dict:
@@ -77,8 +76,21 @@ def _prettify_updates(updates: dict) -> Tuple[response.ResultObj]:
 
 
 class ResponseEncoder(json.JSONEncoder):
-    ...
+    def default(self, o: Any) -> Any:
+        if isinstance(o, Commands):
+            return o.name
+        return super().default(o)
 
 
 class ResponseDecoder(json.JSONDecoder):
-    ...
+    def __init__(self, *args, **kwargs):
+        super().__init__(object_hook=self.object_hook, *args, **kwargs)
+
+    @staticmethod
+    def object_hook(dct: dict) -> response.Updates | dict:
+        if 'result' not in dct:
+            return dct
+
+        last_update_id = dct['result'][-1].get('update_id', -1) if len(dct['result']) > 0 else -1
+        pretty_updates = _prettify_updates(dct)
+        return response.Updates(tuple(update.message for update in pretty_updates), last_update_id)
