@@ -9,8 +9,8 @@ class MessageFrom:
     id: int
     is_bot: bool
     first_name: str
-    last_name: str | None
-    username: str
+    last_name: str | None = None
+    username: str | None = None
 
 
 @dataclass(frozen=True)
@@ -48,6 +48,11 @@ class GetUpdatesResponse:
 
 @dataclass(frozen=True)
 class Updates:
-    """this is the final processed class of received messages from the users"""
     messages: Tuple[Message, ...]
     last_update_id: int
+
+
+@dataclass(frozen=True)
+class PackedUpdate:
+    id: int
+    messages: Tuple[Message, ...]

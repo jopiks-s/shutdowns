@@ -1,9 +1,20 @@
 import queue
+from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from threading import Thread
+from typing import Tuple
 
 from bot.botAPI import BotAPI
+from bot.botAPI.response import PackedUpdate, Updates
 from log import logger
+
+
+def pack_updates(updates: Updates) -> Tuple[PackedUpdate, ...]:
+    res = defaultdict(lambda: [])
+    for update in updates.messages:
+        res[update.from_.id].append(update)
+
+    return tuple(PackedUpdate(user_id, tuple(messages)) for user_id, messages in res.items())
 
 
 class Puller:
@@ -21,8 +32,9 @@ class Puller:
             if not updates:
                 continue
             offset = updates.last_update_id + 1
-            for update in updates.messages:
-                self.client_queue.put(update)
+            for packed_update in pack_updates(updates):
+                logger.debug(f'packed update id: {packed_update.id}, messages: {[m.text for m in packed_update.messages]}')
+                self.client_queue.put(packed_update)
 
     # start [1] thread
     def start_thread(self, executor: ThreadPoolExecutor):
