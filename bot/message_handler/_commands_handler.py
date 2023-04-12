@@ -36,8 +36,8 @@ def setgroup_command(self, message: response.Message):
                       'Where [1-3] is your group number\n'
             self.client.send_message(user.user_id, message)
 
-        case ():
-            message = '/setgroup [1-3]\n' \
+        case _:
+            message = 'Syntax: /setgroup [1-3]\n' \
                       'Where [1-3] is your group number\n'
             self.client.send_message(user.user_id, message)
 

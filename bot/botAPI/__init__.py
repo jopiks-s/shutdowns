@@ -3,6 +3,7 @@ import requests
 from ._commands import Commands
 from ._updates_parser import ResponseEncoder
 from ._updates_parser import ResponseDecoder
+from ._get_updates import pack_updates
 
 
 class BotAPI:

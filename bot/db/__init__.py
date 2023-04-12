@@ -1,4 +1,5 @@
-from mongoengine import Document, IntField, BooleanField, connect
+from mongoengine import Document, IntField, BooleanField, connect, DictField, EmbeddedDocument, EmbeddedDocumentField, \
+    ListField
 
 from log import logger
 
@@ -18,3 +19,7 @@ def get_user(user_id: int) -> User:
     if len(users):
         return users[0]
     return User(user_id=user_id).save()
+
+
+class DisconSchedule(Document):
+    group_index: ListField(EmbeddedDocumentField(...))
