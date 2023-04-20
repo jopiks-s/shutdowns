@@ -1,9 +1,11 @@
-from mongoengine import Document, IntField, BooleanField, connect, DictField, EmbeddedDocument, EmbeddedDocumentField, \
-    ListField
+from datetime import datetime
+
+from mongoengine import Document, IntField, BooleanField, connect, ListField, DateTimeField, EmbeddedDocument, \
+    EmbeddedDocumentField, StringField
 
 from log import logger
 
-connect('tg')
+connect('test')
 
 
 class User(Document):
@@ -21,5 +23,14 @@ def get_user(user_id: int) -> User:
     return User(user_id=user_id).save()
 
 
+class DisconDay(EmbeddedDocument):
+    timetable = ListField(StringField())
+
+
+class DisconWeek(EmbeddedDocument):
+    days = ListField(EmbeddedDocumentField(DisconDay))
+
+
 class DisconSchedule(Document):
-    group_index: ListField(EmbeddedDocumentField(...))
+    groups = ListField(EmbeddedDocumentField(DisconWeek), required=True, unique=True)
+    last_update = DateTimeField(default=datetime.utcnow())
