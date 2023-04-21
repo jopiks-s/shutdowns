@@ -5,12 +5,14 @@ from concurrent.futures import ThreadPoolExecutor
 from threading import Thread
 
 from bot.botAPI import BotAPI, Commands, response
+from bot.browser import Browser
 from log import logger
 
 
 class MessageHandler:
     from ._commands_handler import not_command
     from ._commands_handler import start_command
+    from ._commands_handler import viewschedule_command
     from ._commands_handler import setgroup_command
     from ._commands_handler import notification_command
     from ._commands_handler import info_command
@@ -22,12 +24,16 @@ class MessageHandler:
         self.commands = {
             None: self.not_command,
             Commands.start: self.start_command,
+            Commands.viewschedule: self.viewschedule_command,
             Commands.setgroup: self.setgroup_command,
             Commands.notification: self.notification_command,
             Commands.info: self.info_command,
             Commands.about: self.about_command,
+
         }
         self.user_locks = defaultdict(threading.Lock)
+        # todo debug version
+        self.browser = Browser()
 
     def _worker(self):
         logger.info("Started")

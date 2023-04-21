@@ -17,7 +17,7 @@ def setgroup_command(self, message: response.Message):
     self.client.send_message(message.chat.id,
                              f"[DEBUG] Got command: {message.command}, params: {message.parameters}")
 
-    user = db.get_user(message.from_.id)
+    user = db.user.get_user(message.from_.id)
     match message.parameters:
         case (1 | 2 | 3 as group, *_):
             user.group = group
@@ -45,7 +45,8 @@ def setgroup_command(self, message: response.Message):
 def notification_command(self, message: response.Message):
     self.client.send_message(message.chat.id,
                              f"[DEBUG] Got command: {message.command}, params: {message.parameters}")
-    user = db.get_user(message.from_.id)
+
+    user = db.user.get_user(message.from_.id)
     user.notification = not user.notification
     user.save()
     message = 'Your notification is now enabled' if user.notification else 'Your notification is now disabled'
@@ -56,7 +57,8 @@ def notification_command(self, message: response.Message):
 def info_command(self, message: response.Message):
     self.client.send_message(message.chat.id,
                              f"[DEBUG] Got command: {message.command}, params: {message.parameters}")
-    user = db.get_user(message.from_.id)
+
+    user = db.user.get_user(message.from_.id)
     message = ''
     if user.group == -1:
         if user.notification:
@@ -67,6 +69,22 @@ def info_command(self, message: response.Message):
         message += f'Notification enabled' if user.notification else 'Notification disabled'
 
     self.client.send_message(user.user_id, message)
+
+
+def viewschedule_command(self, message: response.Message):
+    self.client.send_message(message.chat.id,
+                             f"[DEBUG] Got command: {message.command}, params: {message.parameters}")
+
+    # todo debug version
+    preset = db.get_preset(self.browser)
+    msg = ''
+    for group in preset.groups:
+        for day in group.days:
+            msg += str(day.timetable) + '\n'
+        msg += '-' * 100 + '\n'
+    msg += str(preset.last_update)
+
+    self.client.send_message(message.from_.id, msg)
 
 
 def about_command(self, message: response.Message):
