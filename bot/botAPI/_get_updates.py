@@ -43,7 +43,6 @@ def pack_updates(updates: Updates) -> Tuple[PackedUpdate, ...]:
     pack_log = 'Packed updates:\n'
     for user_id, messages in packed_updates.items():
         pack_log += json.dumps({user_id: [asdict(message) for message in messages]}, cls=ResponseEncoder, indent=4)
-    print(pack_log)
     request_logger.info(pack_log)
 
     return tuple(PackedUpdate(user_id, tuple(messages)) for user_id, messages in packed_updates.items())

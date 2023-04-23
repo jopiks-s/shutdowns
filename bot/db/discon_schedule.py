@@ -1,7 +1,10 @@
+from threading import Lock
 from datetime import datetime
 
 from mongoengine import *
 from log import logger
+
+preset_lock = Lock()
 
 
 class DisconDay(EmbeddedDocument):
@@ -18,22 +21,20 @@ class DisconSchedule(Document):
 
 
 def get_preset(browser) -> DisconSchedule | None:
-    if len(DisconSchedule.objects) >= 1:
-        if len(DisconSchedule.objects) > 1:
-            logger.warning('Multiple records for DisconSchedule')
-        preset = DisconSchedule.objects[0]
-        if _expiration_check(preset):
+    with preset_lock:
+        if len(DisconSchedule.objects) >= 1:
+            if len(DisconSchedule.objects) > 1:
+                logger.warning('Multiple records for DisconSchedule')
+            if _expiration_check(DisconSchedule.objects[0]):
+                browser.update_preset()
+            return DisconSchedule.objects[0]
+        else:
             preset = browser.update_preset()
-        return DisconSchedule.objects[0] if preset is None else preset
-
-    preset = browser.update_preset()
-    if preset is None:
-        logger.error('Data base doesn`t have disconnect schedule and also cannot get it from browser')
-        return
-    return preset
+            if preset is None:
+                logger.error('Data base doesn`t have disconnect schedule and also cannot get it from browser')
+            return preset
 
 
 def _expiration_check(preset: DisconSchedule) -> bool:
-    # return (datetime.utcnow() - preset.last_update).days > 1
-    # todo debug version
-    return (datetime.utcnow() - preset.last_update).days >= 0
+    return (datetime.utcnow() - preset.last_update).days >= 1
+    # return True

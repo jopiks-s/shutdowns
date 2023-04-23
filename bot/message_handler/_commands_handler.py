@@ -13,6 +13,26 @@ def start_command(self, message: response.Message):
                              f"[DEBUG] Got command: {message.command}, params: {message.parameters}")
 
 
+def viewschedule_command(self, message: response.Message):
+    self.client.send_message(message.chat.id,
+                             f"[DEBUG] Got command: {message.command}, params: {message.parameters}")
+
+    user = db.user.get_user(message.from_.id)
+    preset = db.get_preset(self.browser)
+    msg = ''
+
+    if preset is None:
+        msg = 'Unfortunately, we are now unable to access the shutdown schedule :('
+    else:
+        for group in preset.groups:
+            for day in group.days:
+                msg += str(day.timetable) + '\n'
+            msg += '-' * 100 + '\n'
+        msg += str(preset.last_update)
+
+    self.client.send_message(user.user_id, msg)
+
+
 def setgroup_command(self, message: response.Message):
     self.client.send_message(message.chat.id,
                              f"[DEBUG] Got command: {message.command}, params: {message.parameters}")
@@ -59,32 +79,15 @@ def info_command(self, message: response.Message):
                              f"[DEBUG] Got command: {message.command}, params: {message.parameters}")
 
     user = db.user.get_user(message.from_.id)
-    message = ''
     if user.group == -1:
         if user.notification:
             logger.warning('Enabled notifications while group isn`t set')
+            logger.warning(f'User id: {user.id}')
         message = 'Your group isn`t set and notification disabled'
     else:
-        message = f'Your group is {user.group}\n'
-        message += f'Notification enabled' if user.notification else 'Notification disabled'
+        message = f'Your group is {user.group} \nNotification {"Enabled" if user.notification else "Disabled"}'
 
     self.client.send_message(user.user_id, message)
-
-
-def viewschedule_command(self, message: response.Message):
-    self.client.send_message(message.chat.id,
-                             f"[DEBUG] Got command: {message.command}, params: {message.parameters}")
-
-    # todo debug version
-    preset = db.get_preset(self.browser)
-    msg = ''
-    for group in preset.groups:
-        for day in group.days:
-            msg += str(day.timetable) + '\n'
-        msg += '-' * 100 + '\n'
-    msg += str(preset.last_update)
-
-    self.client.send_message(message.from_.id, msg)
 
 
 def about_command(self, message: response.Message):

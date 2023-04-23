@@ -9,7 +9,6 @@ from bot.db import DisconSchedule
 
 
 def update_preset(self) -> DisconSchedule | None:
-    # todo condition race
     self.browser.get(self.url)
     raw_preset = _discon_txt_to_json(self.browser.page_source)
     db_preset = _preset_mapper(raw_preset)
@@ -22,11 +21,13 @@ def update_preset(self) -> DisconSchedule | None:
         logger.info('Preset successfully updated')
         return discon_schedule
     except ValidationError as e:
+        logger.warning('Failed to update preset')
         logger.warning('Can`t validate "db_preset" to create "DisconSchedule" object')
         logger.warning(f'Object to validate: {db_preset=}')
         logger.warning(f'Exception: {e}')
         return
     except Exception as e:
+        logger.warning('Failed to update preset')
         logger.warning(f'An unexpected exception occurred: {e}')
         logger.warning(f'Object to validate: {db_preset=}')
         return

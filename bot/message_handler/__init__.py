@@ -18,9 +18,10 @@ class MessageHandler:
     from ._commands_handler import info_command
     from ._commands_handler import about_command
 
-    def __init__(self, client: BotAPI, client_queue: queue.Queue):
+    def __init__(self, client: BotAPI, client_queue: queue.Queue, browser: Browser):
         self.client = client
         self.client_queue = client_queue
+        self.browser = browser
         self.commands = {
             None: self.not_command,
             Commands.start: self.start_command,
@@ -32,15 +33,12 @@ class MessageHandler:
 
         }
         self.user_locks = defaultdict(threading.Lock)
-        # todo debug version
-        self.browser = Browser()
 
     def _worker(self):
         logger.info("Started")
         while True:
             packed_update: response.PackedUpdate = self.client_queue.get()
-            user_id = packed_update.id
-            with self.user_locks[user_id]:
+            with self.user_locks[packed_update.id]:
                 for message in packed_update.messages:
                     self.commands[message.command](message)
 

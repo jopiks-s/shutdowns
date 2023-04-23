@@ -4,6 +4,7 @@ from concurrent.futures import ThreadPoolExecutor
 from bot.botAPI import BotAPI
 from bot.message_handler import MessageHandler
 from bot.puller import Puller
+from bot.browser import Browser
 from log import logger
 
 
@@ -13,8 +14,9 @@ class Bot:
         logger.warning("Bot must have at least 2 threads!") if threads_n < 2 else ...
         self.threads_n = max(2, threads_n)
         self.client_queue = queue.Queue()
+        self.browser = Browser()
         self.poller = Puller(self.client, self.client_queue)
-        self.message_manager = MessageHandler(self.client, self.client_queue)
+        self.message_manager = MessageHandler(self.client, self.client_queue, self.browser)
 
     def loop(self) -> None:
         """
