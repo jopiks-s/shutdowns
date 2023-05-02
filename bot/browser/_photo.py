@@ -26,12 +26,12 @@ def _update_preset_photos(self) -> bool:
         self.driver.get(f'{root_path}/bot/browser/render/group{i + 1}.html')
         wrapper = self.driver.find_element(By.CLASS_NAME, 'wrapper')
         b = self.driver.execute_script('return arguments[0].getBoundingClientRect();', wrapper)
-        image = Image.open(BytesIO(self.driver.get_screenshot_as_png()))
-        image = image.crop((0, 0, b['right'] + 8, b['bottom'] - 16))
-        image.save(f'{root_path}/bot/browser/render/group{i + 1}.png')
-        image.close()
-        with open(f'{root_path}/bot/browser/render/group{i + 1}.png', 'rb') as img:
-            self.photos[i+1] = img.read()
+        with Image.open(BytesIO(self.driver.get_screenshot_as_png())) as image:
+            image = image.crop((0, 0, b['right'] + 8, b['bottom'] - 16))
+            image.save(f'{root_path}/bot/browser/render/group{i + 1}.png')
+            image.close()
+            with open(f'{root_path}/bot/browser/render/group{i + 1}.png', 'rb') as img:
+                self.photos[i+1] = img.read()
     logger.info('Photos successfully updated')
     return True
 
