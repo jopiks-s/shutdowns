@@ -1,4 +1,4 @@
-import json
+import random
 
 from bot import db
 from bot.botAPI import response
@@ -21,23 +21,24 @@ def viewschedule_command(self, message: response.Message):
 
     user = db.user.get_user(message.from_.id)
     preset = db.get_preset(self.browser)
-    msg = ''
+    debug_msg = ''
 
     if preset is None:
-        msg = 'Unfortunately, we are now unable to access the shutdown schedule :('
+        debug_msg = 'Unfortunately, we are now unable to access the shutdown schedule :('
     else:
         for group in preset.groups:
             for day in group.days:
-                msg += str(day.timetable) + '\n'
-            msg += '-' * 100 + '\n'
-        msg += str(preset.last_update)
+                debug_msg += str(day.timetable) + '\n'
+            debug_msg += '-' * 100 + '\n'
+        debug_msg += str(preset.last_update)
+    # todo return group of user if parameters is empty
+    if not len(message.parameters):
+        group_index = random.randint(1, 3)
+    else:
+        group_index = message.parameters[0]
 
-    self.client.send_message(user.user_id, msg)
-    with open('test.jpg', 'rb') as f:
-        photo_bytes = f.read()
-    # res = self.client.send_photo(user.user_id, photo_bytes, 'hello')
-    res = self.client.send_photo(user.user_id, photo='AgACAgIAAxkDAAITRWRLqfUj3cu_z1OXvbB9KnospzQdAAKe2DEb2FNZSgizaBPCx626AQADAgADcwADLwQ', caption='hello')
-    logger.debug(json.dumps(res, indent=4))
+    self.client.send_message(user.user_id, debug_msg)
+    self.client.send_photo(user.user_id, self.browser.get_preset_photo(group_index), f'Group {group_index}')
 
 
 def setgroup_command(self, message: response.Message):

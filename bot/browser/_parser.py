@@ -19,6 +19,7 @@ def update_preset(self) -> DisconSchedule | None:
         DisconSchedule.objects().delete()
         discon_schedule.save()
         logger.info('Preset successfully updated')
+        self._update_preset_photos()
         return discon_schedule
     except ValidationError as e:
         logger.warning('Failed to update preset')
@@ -67,5 +68,5 @@ def _preset_mapper(preset: dict) -> dict:
         db_preset['groups'].append({'days': []})
         for days in list(discon_data.values()):
             db_preset['groups'][i]['days'].append({'timetable': list(days.values())})
-    db_preset['last_update'] = datetime.utcnow().strftime('%d/%m/%y %H:%M:%S')
+    db_preset['last_update'] = datetime.utcnow()
     return db_preset
