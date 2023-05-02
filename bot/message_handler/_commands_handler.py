@@ -1,3 +1,5 @@
+import json
+
 from bot import db
 from bot.botAPI import response
 from log import logger
@@ -31,6 +33,11 @@ def viewschedule_command(self, message: response.Message):
         msg += str(preset.last_update)
 
     self.client.send_message(user.user_id, msg)
+    with open('test.jpg', 'rb') as f:
+        photo_bytes = f.read()
+    # res = self.client.send_photo(user.user_id, photo_bytes, 'hello')
+    res = self.client.send_photo(user.user_id, photo='AgACAgIAAxkDAAITRWRLqfUj3cu_z1OXvbB9KnospzQdAAKe2DEb2FNZSgizaBPCx626AQADAgADcwADLwQ', caption='hello')
+    logger.debug(json.dumps(res, indent=4))
 
 
 def setgroup_command(self, message: response.Message):
