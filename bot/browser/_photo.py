@@ -37,7 +37,7 @@ def _update_preset_photos(self) -> bool:
 
 
 def update_preset_htmls() -> bool:
-    if len(DisconSchedule.objects()) == 0:
+    if not len(DisconSchedule.objects()):
         logger.warning('Failed to update preset htmls as database is empty')
         return False
 

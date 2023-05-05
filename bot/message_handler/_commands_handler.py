@@ -1,5 +1,3 @@
-import random
-
 from bot import db
 from bot.botAPI import response
 from log import logger
@@ -21,24 +19,28 @@ def viewschedule_command(self, message: response.Message):
 
     user = db.user.get_user(message.from_.id)
     preset = db.get_preset(self.browser)
-    debug_msg = ''
 
     if preset is None:
         debug_msg = 'Unfortunately, we are now unable to access the shutdown schedule :('
-    else:
-        for group in preset.groups:
-            for day in group.days:
-                debug_msg += str(day.timetable) + '\n'
-            debug_msg += '-' * 100 + '\n'
-        debug_msg += str(preset.last_update)
-    # todo return group of user if parameters is empty
-    if not len(message.parameters):
-        group_index = random.randint(1, 3)
-    else:
-        group_index = message.parameters[0]
+        return
 
-    self.client.send_message(user.user_id, debug_msg)
-    self.client.send_photo(user.user_id, self.browser.get_preset_photo(group_index), f'Group {group_index}')
+    def handle_user_group():
+        group_index = user.group
+        if group_index == -1:
+            self.client.send_message(user.user_id, 'You have not yet set the group index.'
+                                                   'You can do this with the command - /setgroup 1-3.'
+                                                   'If you want to look at any group, write the command - /viewschedule 1-3')
+        else:
+            self.client.send_photo(user.user_id, self.browser.get_preset_photo(group_index), f'Group {group_index}')
+
+    if len(message.parameters):
+        group_index = message.parameters[0]
+        if isinstance(group_index, int) and 1 <= group_index <= 3:
+            self.client.send_photo(user.user_id, self.browser.get_preset_photo(group_index), f'Group {group_index}')
+        else:
+            handle_user_group()
+    else:
+        handle_user_group()
 
 
 def setgroup_command(self, message: response.Message):
@@ -60,13 +62,13 @@ def setgroup_command(self, message: response.Message):
 
         case (group, *_):
             message = 'Wrong command :<\n' \
-                      'The correct way "/setgroup [1-3]"\n' \
-                      'Where [1-3] is your group number\n'
+                      'The correct way "/setgroup 1-3"\n' \
+                      'Where 1-3 is your group number\n'
             self.client.send_message(user.user_id, message)
 
         case _:
-            message = 'Syntax: /setgroup [1-3]\n' \
-                      'Where [1-3] is your group number\n'
+            message = 'Syntax: /setgroup 1-3\n' \
+                      'Where 1-3 is your group index\n'
             self.client.send_message(user.user_id, message)
 
 
