@@ -1,3 +1,4 @@
+from datetime import datetime
 from io import BytesIO
 
 import pandas
@@ -24,7 +25,8 @@ def _update_preset_photos(self) -> bool:
         logger.warning('Failed to update preset photos')
         return False
     for i in range(3):
-        self.driver.get(f'{root_path}/bot/browser/render/group{i + 1}.html')
+        day_index = datetime.now(timezone('Europe/Kiev')).weekday() + 1
+        self.driver.get(f'{root_path}/bot/browser/render/group{i + 1}.html?{day_index=}')
         wrapper = self.driver.find_element(By.CLASS_NAME, 'wrapper')
         b = self.driver.execute_script('return arguments[0].getBoundingClientRect();', wrapper)
         with Image.open(BytesIO(self.driver.get_screenshot_as_png())) as image:
@@ -32,7 +34,7 @@ def _update_preset_photos(self) -> bool:
             image.save(f'{root_path}/bot/browser/render/group{i + 1}.png')
             image.close()
             with open(f'{root_path}/bot/browser/render/group{i + 1}.png', 'rb') as img:
-                self.photos[i+1] = img.read()
+                self.photos[i + 1] = img.read()
     logger.info('Photos successfully updated')
     return True
 
@@ -46,22 +48,16 @@ def update_preset_htmls() -> bool:
     column_names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     row_names = [f'{v}-{v + 1}' for v in range(24)]
 
-    css = '<link rel="stylesheet" href="style.css">'
-    wrapper = '<div class="wrapper">\n'
     last_update = 'last_update expired' if expiration_check(preset) else 'last_update'
-    last_update = f'<p class="{last_update}">' \
-                  f'{preset.last_update.strftime("%d %B, %H:%M:%S")}' \
-                  f'</p>\n'
+    with open(f'{root_path}/bot/browser/render/html_markup.html', 'r') as f:
+        html_markup = ''.join(f.readlines())
 
     for i, group in enumerate(preset.groups):
         d = {day: group.days[j].timetable for j, day in enumerate(column_names)}
         df = pandas.DataFrame(d, index=row_names)
         table = df.to_html()
         with open(f'{root_path}/bot/browser/render/group{i + 1}.html', 'w') as f:
-            f.write(css)
-            f.write(wrapper)
-            f.write(table + '\n')
-            f.write(last_update)
-            f.write('</div>')
+            f.write(html_markup.format(table=table, last_update=last_update,
+                                       time=preset.last_update.strftime("%d %B, %H:%M:%S")))
     logger.info('Htmls successfully updated')
     return True
