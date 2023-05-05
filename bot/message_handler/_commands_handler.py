@@ -4,19 +4,14 @@ from log import logger
 
 
 def not_command(self, message: response.Message):
-    self.client.send_message(message.chat.id,
-                             f"[DEBUG] Your message: {message.text}")
+    return
 
 
 def start_command(self, message: response.Message):
-    self.client.send_message(message.chat.id,
-                             f"[DEBUG] Got command: {message.command}, params: {message.parameters}")
+    return
 
 
-def viewschedule_command(self, message: response.Message):
-    self.client.send_message(message.chat.id,
-                             f"[DEBUG] Got command: {message.command}, params: {message.parameters}")
-
+def view_command(self, message: response.Message):
     user = db.user.get_user(message.from_.id)
     preset = db.get_preset(self.browser)
 
@@ -29,7 +24,7 @@ def viewschedule_command(self, message: response.Message):
         if group_index == -1:
             self.client.send_message(user.user_id, 'You have not yet set the group index.'
                                                    'You can do this with the command - /setgroup 1-3.'
-                                                   'If you want to look at any group, write the command - /viewschedule 1-3')
+                                                   'If you want to look at any group, write the command - /view 1-3')
         else:
             self.client.send_photo(user.user_id, self.browser.get_preset_photo(group_index), f'Group {group_index}')
 
@@ -44,9 +39,6 @@ def viewschedule_command(self, message: response.Message):
 
 
 def setgroup_command(self, message: response.Message):
-    self.client.send_message(message.chat.id,
-                             f"[DEBUG] Got command: {message.command}, params: {message.parameters}")
-
     user = db.user.get_user(message.from_.id)
     match message.parameters:
         case (1 | 2 | 3 as group, *_):
@@ -73,9 +65,6 @@ def setgroup_command(self, message: response.Message):
 
 
 def notification_command(self, message: response.Message):
-    self.client.send_message(message.chat.id,
-                             f"[DEBUG] Got command: {message.command}, params: {message.parameters}")
-
     user = db.user.get_user(message.from_.id)
     user.notification = not user.notification
     user.save()
@@ -85,9 +74,6 @@ def notification_command(self, message: response.Message):
 
 
 def info_command(self, message: response.Message):
-    self.client.send_message(message.chat.id,
-                             f"[DEBUG] Got command: {message.command}, params: {message.parameters}")
-
     user = db.user.get_user(message.from_.id)
     if user.group == -1:
         if user.notification:
@@ -100,5 +86,5 @@ def info_command(self, message: response.Message):
     self.client.send_message(user.user_id, message)
 
 
-def about_command(self, message: response.Message):
-    ...
+def help_command(self, message: response.Message):
+    return

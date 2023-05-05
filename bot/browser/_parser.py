@@ -3,6 +3,7 @@ from datetime import datetime
 
 from bs4 import BeautifulSoup
 from mongoengine import ValidationError
+from pytz import timezone
 
 from log import logger
 from bot.db import DisconSchedule
@@ -68,5 +69,5 @@ def _preset_mapper(preset: dict) -> dict:
         db_preset['groups'].append({'days': []})
         for days in list(discon_data.values()):
             db_preset['groups'][i]['days'].append({'timetable': list(days.values())})
-    db_preset['last_update'] = datetime.utcnow()
+    db_preset['last_update'] = datetime.now(timezone('Europe/Kiev')).replace(tzinfo=None)
     return db_preset

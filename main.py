@@ -5,3 +5,4 @@ bot = Bot(bot_token, 10)
 bot.loop()
 
 # TODO great ending
+# TODO localization en/ua

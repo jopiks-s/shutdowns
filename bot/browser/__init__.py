@@ -1,6 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
+from log import logger
+
 
 class Browser:
     from ._parser import update_preset
@@ -11,12 +13,14 @@ class Browser:
         self.url = 'https://www.dtek-kem.com.ua/ua/shutdowns'
 
         options = Options()
-        # options.add_argument('--headless')
+        options.add_argument('--headless')
         self.browser = webdriver.Chrome(options=options)
 
         options = Options()
-        # options.add_argument('--headless')
+        options.add_argument('--headless')
         options.add_argument('--start-maximized')
         options.add_argument('--force-device-scale-factor=1')
         self.driver = webdriver.Chrome(options=options)
+        self.driver.set_window_size(1920, 1080)
 
+        logger.info('Browser started')

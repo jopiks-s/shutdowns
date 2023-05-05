@@ -1,4 +1,5 @@
 from datetime import datetime
+from pytz import timezone
 from threading import Lock
 
 from mongoengine import *
@@ -18,7 +19,7 @@ class DisconWeek(EmbeddedDocument):
 
 class DisconSchedule(Document):
     groups = ListField(EmbeddedDocumentField(DisconWeek), required=True, unique=True)
-    last_update = DateTimeField(default=datetime.utcnow())
+    last_update = DateTimeField(required=True)
 
 
 def get_preset(browser) -> DisconSchedule | None:
@@ -37,11 +38,14 @@ def get_preset(browser) -> DisconSchedule | None:
 
 
 def expiration_check(preset: DisconSchedule) -> bool:
-    expired = (datetime.utcnow() - preset.last_update).days >= 1
+    now = datetime.now(timezone('Europe/Kiev'))
+    last_update = preset.last_update.replace(tzinfo=timezone('Europe/Kiev'))
+    calculation = now - last_update
+    expired = calculation.days >= 1
     if expired:
         expired_log = 'The preset has already expired\n'
-        expired_log += f'now: {datetime.utcnow()}, last_update: {preset.last_update}, ' \
-                       f'calculation: {datetime.utcnow() - preset.last_update} '
+        expired_log += f'{now=}, {last_update=},' \
+                       f'{calculation=}'
         logger.info(expired_log)
+
     return expired
-    # return True

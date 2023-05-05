@@ -2,6 +2,7 @@ from io import BytesIO
 
 import pandas
 from PIL import Image
+from pytz import timezone
 from selenium.webdriver.common.by import By
 
 from bot.db import DisconSchedule, expiration_check
@@ -38,21 +39,24 @@ def _update_preset_photos(self) -> bool:
 
 def update_preset_htmls() -> bool:
     if not len(DisconSchedule.objects()):
-        logger.warning('Failed to update preset htmls as database is empty')
+        logger.warning('Failed to update preset htmls as preset database is empty')
         return False
 
     preset: DisconSchedule = DisconSchedule.objects[0]
     column_names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     row_names = [f'{v}-{v + 1}' for v in range(24)]
+
+    css = '<link rel="stylesheet" href="style.css">'
+    wrapper = '<div class="wrapper">\n'
+    last_update = 'last_update expired' if expiration_check(preset) else 'last_update'
+    last_update = f'<p class="{last_update}">' \
+                  f'{preset.last_update.strftime("%d %B, %H:%M:%S")}' \
+                  f'</p>\n'
+
     for i, group in enumerate(preset.groups):
         d = {day: group.days[j].timetable for j, day in enumerate(column_names)}
         df = pandas.DataFrame(d, index=row_names)
-
-        css = '<link rel="stylesheet" href="style.css">'
-        wrapper = '<div class="wrapper">\n'
         table = df.to_html()
-        last_update = 'last_update expired' if expiration_check(preset) else 'last_update'
-        last_update = f'<p class="{last_update}">{preset.last_update.strftime("%d %B, %H:%M:%S")}</p>\n'
         with open(f'{root_path}/bot/browser/render/group{i + 1}.html', 'w') as f:
             f.write(css)
             f.write(wrapper)

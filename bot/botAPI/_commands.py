@@ -1,10 +1,15 @@
 from enum import Enum
+from typing import List
 
 
 class Commands(Enum):
-    start = 0
-    viewschedule = 1
-    setgroup = 2
-    notification = 3
-    info = 4
-    about = 5
+    start = 'Activate bot'
+    view = 'Show schedule of blackouts'
+    setgroup = 'Set your group index from 1 to 3'
+    notification = 'Enable/disable notification'
+    info = 'Statistic help your account'
+    help = 'Information help bot'
+
+    @staticmethod
+    def to_json() -> List[dict]:
+        return [{'command': command.name, 'description': command.value} for command in Commands]

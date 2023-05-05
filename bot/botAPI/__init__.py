@@ -1,5 +1,9 @@
+import json
+from typing import List
+
 import requests
 
+from log import logger
 from ._commands import Commands
 from ._get_updates import pack_updates
 from ._updates_parser import ResponseEncoder, ResponseDecoder
@@ -16,6 +20,11 @@ class BotAPI:
         return f"https://api.telegram.org/bot{self.token}/{method}"
 
     def send_message(self, chat_id: int, text: str) -> dict:
-        payload = {'chat_id': chat_id, 'text': text}
         url = self.api_url('sendMessage')
+        payload = {'chat_id': chat_id, 'text': text}
+        return requests.post(url, data=payload).json()
+
+    def set_my_commands(self, commands: List[dict]):
+        url = self.api_url('setMyCommands')
+        payload = {'commands': json.dumps(commands)}
         return requests.post(url, data=payload).json()
