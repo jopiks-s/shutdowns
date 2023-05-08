@@ -13,3 +13,13 @@ document.querySelectorAll(`table tr td:nth-child(${day_index+1})`).forEach(c => 
 document.querySelectorAll(`thead tr th:nth-child(${day_index})`).forEach(c => {
     c.style.backgroundColor = '#ffe500';
 });
+document.querySelectorAll(`td`).forEach(c => {
+    let txt = c.innerHTML;
+    c.innerHTML = '';
+    if(txt=='no'){
+        c.className = 'discon no';
+    }
+    else if(txt=='maybe'){
+        c.className = 'discon maybe';
+    }
+});

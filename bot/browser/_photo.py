@@ -24,8 +24,9 @@ def _update_preset_photos(self) -> bool:
     if not update_preset_htmls():
         logger.warning('Failed to update preset photos')
         return False
+
+    day_index = datetime.now(timezone('Europe/Kiev')).weekday() + 1
     for i in range(3):
-        day_index = datetime.now(timezone('Europe/Kiev')).weekday() + 1
         self.driver.get(f'{root_path}/bot/browser/render/group{i + 1}.html?{day_index=}')
         wrapper = self.driver.find_element(By.CLASS_NAME, 'wrapper')
         b = self.driver.execute_script('return arguments[0].getBoundingClientRect();', wrapper)
@@ -46,7 +47,7 @@ def update_preset_htmls() -> bool:
 
     preset: DisconSchedule = DisconSchedule.objects[0]
     column_names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    row_names = [f'{v}-{v + 1}' for v in range(24)]
+    row_names = [f'{v:02d}-{(v + 1):02d}' for v in range(24)]
 
     last_update = 'last_update expired' if expiration_check(preset) else 'last_update'
     with open(f'{root_path}/bot/browser/render/html_markup.html', 'r') as f:

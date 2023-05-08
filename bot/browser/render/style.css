@@ -24,24 +24,21 @@ table {
     border: 1px solid #cfcfcf;
     border-spacing: 0;
     border-radius: 10px !important;
-    font-size: 21px;
-    font-family: "Roboto-Regular",Arial,sans-serif;
+    font-size: 18px;
+    font-family: "Roboto",sans-serif;
     line-height: .6em;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-}
-table tbody tr:nth-of-type(even) {
-    background-color: rgb(240, 240, 240);
 }
 
 thead tr {
     text-align: center !important;
-    background-color: #e6e6e6;
+    /* background-color: #e6e6e6; */
 }
 
-thead tr th:nth-of-type(1){
+thead tr th:nth-of-type(1) {
     border-top-left-radius: 7px;
 }
-thead tr th:last-child{
+thead tr th:last-child {
     border-top-right-radius: 7px;
 }
 tbody tr:last-child th {
@@ -51,7 +48,36 @@ tbody tr:last-child td:last-child {
     border-bottom-right-radius: 7px;
 }
 
-th, td {
-    padding: 10px 13px;
+td, th {
     border: 1px solid #d6d6d6;
+}
+
+tbody th {
+    padding: 10px 13px;
+    width: 55px;
+    font-weight: 500;
+}
+
+thead th {
+    padding: 10px 13px;
+}
+
+td {
+    width: 75px;
+    padding: 10px 13px;
+}
+
+.discon {
+    background-image: url('no-electricity.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 20px;
+}
+
+.discon.maybe {
+    background-color: rgba(204,206,207,.33);
+    opacity: .7;
+}
+.discon.no {
+    background-color: rgba(204, 206, 207, .87);
 }
