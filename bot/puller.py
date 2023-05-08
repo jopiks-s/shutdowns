@@ -24,6 +24,5 @@ class Puller:
             for packed_update in botAPI.pack_updates(updates):
                 self.client_queue.put(packed_update)
 
-    # start [1] thread
     def start_thread(self, executor: ThreadPoolExecutor):
         executor.submit(Thread(name="puller0", target=self._puller).start)

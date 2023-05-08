@@ -15,7 +15,7 @@ file_handler.setFormatter(logging.Formatter(
 con_handler = logging.StreamHandler()
 con_handler.setLevel(logging.DEBUG)
 con_handler.setFormatter(
-    ColorFormatter(fmt="%(asctime)s,%(msecs)d %(levelname)s %(filename)s->%(funcName)s(); %(message)s",
+    ColorFormatter(fmt="%(asctime)s,%(msecs)d %(levelname)s %(module)s->%(funcName)s(); %(message)s",
                    datefmt="%H:%M:%S"))
 
 logger.addHandler(file_handler)
