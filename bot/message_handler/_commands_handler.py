@@ -12,26 +12,26 @@ def start_command(self, message: response.Message):
 
 
 def view_command(self, message: response.Message):
-    user = db.user.get_user(message.from_.id)
-    preset = db.get_preset(self.browser)
+    user = db.get_user(message.from_.id)
+    preset = self.DB.get_preset()
 
     if preset is None:
-        debug_msg = 'Unfortunately, we are now unable to access the shutdown schedule :('
+        self.client.send_message(user.user_id, 'Unfortunately, we are now unable to access the shutdown schedule :(')
         return
 
+    # TODO render 'no group' image when user.grop is None
     def handle_user_group():
-        group_index = user.group
-        if group_index == -1:
-            self.client.send_message(user.user_id, 'You have not yet set the group index.'
-                                                   'You can do this with the command - /setgroup 1-3.'
+        if user.group is None:
+            self.client.send_message(user.user_id, 'You have not yet set the group index\n'
+                                                   'You can do this with the command - /setgroup 1-3\n'
                                                    'If you want to look at any group, write the command - /view 1-3')
         else:
-            self.client.send_photo(user.user_id, self.browser.get_preset_photo(group_index), f'Group {group_index}')
+            self.client.send_photo(user.user_id, self.browser.get_photo(user.group, preset), f'Group {group_index}')
 
     if len(message.parameters):
         group_index = message.parameters[0]
         if isinstance(group_index, int) and 1 <= group_index <= 3:
-            self.client.send_photo(user.user_id, self.browser.get_preset_photo(group_index), f'Group {group_index}')
+            self.client.send_photo(user.user_id, self.browser.get_photo(group_index, preset), f'Group {group_index}')
         else:
             handle_user_group()
     else:
@@ -39,49 +39,70 @@ def view_command(self, message: response.Message):
 
 
 def setgroup_command(self, message: response.Message):
-    user = db.user.get_user(message.from_.id)
+    user = db.get_user(message.from_.id)
     match message.parameters:
         case (1 | 2 | 3 as group, *_):
             user.group = group
-            user.save()
+            user = user.save()
             message = 'Your group has been successfully updated!'
+
             logger.warning('Missing logic to update notification schedule according with new group index')
+
             self.client.send_message(user.user_id, message)
 
         case (group, *_) if isinstance(group, int):
-            message = f'You send group number {group}, but possible only in range 1-3'
+            message = f'You send group number of "{group}", but possible only in range 1-3'
             self.client.send_message(user.user_id, message)
 
         case (group, *_):
             message = 'Wrong command :<\n' \
-                      'The correct way "/setgroup 1-3"\n' \
+                      'Maybe you meant this: "/setgroup 1-3"\n' \
                       'Where 1-3 is your group number\n'
             self.client.send_message(user.user_id, message)
 
         case _:
-            message = 'Syntax: /setgroup 1-3\n' \
+            message = 'Example: /setgroup 1-3\n' \
                       'Where 1-3 is your group index\n'
             self.client.send_message(user.user_id, message)
 
 
-def notification_command(self, message: response.Message):
-    user = db.user.get_user(message.from_.id)
-    user.notification = not user.notification
-    user.save()
-    message = 'Your notification is now enabled' if user.notification else 'Your notification is now disabled'
-    self.client.send_message(user.user_id, message)
-    logger.warning('Missing logic to disable scheduled notifications for user')
+def notification_advance_command(self, message: response.Message):
+    user = db.get_user(message.from_.id)
+    max_advance = db.User.notification_advance.max_value
+    match message.parameters:
+        case (advance, *_) if 0 <= advance <= max_advance:
+            user.notification_advance = advance
+            user = user.save()
+
+            logger.warning('Missing logic to update notifications according to new offset')
+
+            message = 'Your notification advance has been successfully updated!'
+            self.client.send_message(user.user_id, message)
+
+        case (advance, *_) if isinstance(advance, int):
+            message = f'You send notification advance of "{advance}", but possible only in range 0-{max_advance}'
+            self.client.send_message(user.user_id, message)
+
+        case (advance, *_):
+            message = 'Wrong command :<\n' \
+                      f'Maybe you meant this: "/notification_advance 0-{max_advance}"\n' \
+                      f'Where 0-{max_advance} is notification advance in minutes'
+            self.client.send_message(user.user_id, message)
+
+        case _:
+            message = f'Example "/notification_advance 0-{max_advance}"\n' \
+                      f'Where 0-{max_advance} is notification advance in minutes'
+            self.client.send_message(user.user_id, message)
 
 
 def info_command(self, message: response.Message):
-    user = db.user.get_user(message.from_.id)
-    if user.group == -1:
-        if user.notification:
-            logger.warning('Enabled notifications while group isn`t set')
-            logger.warning(f'User id: {user.id}')
-        message = 'Your group isn`t set and notification disabled'
+    user = db.get_user(message.from_.id)
+    if user.group is None:
+        message = 'Your group isn`t set yet\n' \
+                  'Notification disabled'
     else:
-        message = f'Your group is {user.group} \nNotification {"Enabled" if user.notification else "Disabled"}'
+        message = f'Your group is {user.group}\n' \
+                  f'Notification advance is {user.notification_advance}min'
 
     self.client.send_message(user.user_id, message)
 

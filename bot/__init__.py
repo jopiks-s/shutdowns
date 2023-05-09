@@ -7,6 +7,7 @@ from bot.message_handler import MessageHandler
 from bot.notification import Notification
 from bot.puller import Puller
 from bot.browser import Browser
+from bot.db import DB
 from log import logger
 
 
@@ -17,10 +18,11 @@ class Bot:
         logger.warning("Bot must have at least 2 threads!") if threads_n < 2 else ...
         self.threads_n = max(2, threads_n)
         self.client_queue = queue.Queue()
-        self.notification = Notification()
         self.browser = Browser()
+        self.notification = Notification()
+        self.DB = DB(self.browser, self.notification)
         self.poller = Puller(self.client, self.client_queue)
-        self.message_manager = MessageHandler(self.client, self.client_queue, self.browser)
+        self.message_manager = MessageHandler(self.client, self.client_queue, self.browser, self.DB)
 
     def loop(self) -> None:
         """

@@ -6,7 +6,7 @@ class Commands(Enum):
     start = 'Activate bot'
     view = 'Show schedule of blackouts'
     setgroup = 'Set your group index from 1 to 3'
-    notification = 'Enable/disable notification'
+    notification_advance = 'How far in advance to warn you (in minutes)'
     info = 'Statistics about your account'
     help = 'Information help bot'
 

@@ -4,19 +4,16 @@ from threading import Thread
 
 import schedule
 
-from bot.db import DisconSchedule
+from bot.db.user import User
+from bot.db.discon_schedule import DisconSchedule
 from log import logger
 
 
 class Notification:
     def __init__(self):
-        self.subscribers = tuple([set() for _ in range(3)])
+        self.subscribers = {}
 
-    def _notify(self, timestamp: list, disc_type: str, group: int):
-        ...
-
-    def load_notification(self, preset: DisconSchedule):
-        schedule.jobs.clear()
+    def _notify(self, user_id: int, timestamp: list, disc_type: str):
         ...
 
     def _loop(self):
@@ -27,3 +24,10 @@ class Notification:
 
     def start_thread(self, executor: ThreadPoolExecutor):
         executor.submit(Thread(name="notification0", target=self._loop).start)
+
+    def update_all_notification(self, preset: DisconSchedule):
+        schedule.jobs.clear()
+        ...
+
+    def add_subscriber(self, preset: DisconSchedule, user: User):
+        ...
