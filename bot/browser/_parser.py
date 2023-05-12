@@ -9,6 +9,7 @@ from bot.db.discon_schedule import DisconSchedule
 from log import logger
 
 
+# todo move logic of validating preset to db
 def update_preset(self) -> DisconSchedule | None:
     with self.browser_lock:
         self.browser.get(self.url)

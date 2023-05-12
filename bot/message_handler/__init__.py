@@ -4,6 +4,7 @@ from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from threading import Thread
 
+from bot.notification import Notification
 from bot.db import DB
 from bot.botAPI import BotAPI, Commands, response
 from bot.browser import Browser
@@ -19,9 +20,10 @@ class MessageHandler:
     from ._commands_handler import info_command
     from ._commands_handler import help_command
 
-    def __init__(self, client: BotAPI, client_queue: queue.Queue, browser: Browser, db: DB):
+    def __init__(self, client: BotAPI, client_queue: queue.Queue, notification: Notification, browser: Browser, db: DB):
         self.client = client
         self.client_queue = client_queue
+        self.notification = notification
         self.browser = browser
         self.DB = db
         self.commands = {

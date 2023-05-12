@@ -13,11 +13,6 @@ def start_command(self, message: response.Message):
 
 def view_command(self, message: response.Message):
     user = db.get_user(message.from_.id)
-    preset = self.DB.get_preset()
-
-    if preset is None:
-        self.client.send_message(user.user_id, 'Unfortunately, we are now unable to access the shutdown schedule :(')
-        return
 
     # TODO render 'no group' image when user.grop is None
     def handle_user_group():
@@ -26,12 +21,12 @@ def view_command(self, message: response.Message):
                                                    'You can do this with the command - /setgroup 1-3\n'
                                                    'If you want to look at any group, write the command - /view 1-3')
         else:
-            self.client.send_photo(user.user_id, self.browser.get_photo(user.group, preset), f'Group {group_index}')
+            self.client.send_photo(user.user_id, self.browser.get_photo(user.group), f'Group {group_index}')
 
     if len(message.parameters):
         group_index = message.parameters[0]
         if isinstance(group_index, int) and 1 <= group_index <= 3:
-            self.client.send_photo(user.user_id, self.browser.get_photo(group_index, preset), f'Group {group_index}')
+            self.client.send_photo(user.user_id, self.browser.get_photo(group_index), f'Group {group_index}')
         else:
             handle_user_group()
     else:
@@ -46,8 +41,7 @@ def setgroup_command(self, message: response.Message):
             user = user.save()
             message = 'Your group has been successfully updated!'
 
-            logger.warning('Missing logic to update notification schedule according with new group index')
-
+            self.notification.subscribe_user(user)
             self.client.send_message(user.user_id, message)
 
         case (group, *_) if isinstance(group, int):

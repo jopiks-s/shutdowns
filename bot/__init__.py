@@ -18,11 +18,14 @@ class Bot:
         logger.warning("Bot must have at least 2 threads!") if threads_n < 2 else ...
         self.threads_n = max(2, threads_n)
         self.client_queue = queue.Queue()
+
         self.browser = Browser()
-        self.notification = Notification()
+        self.notification = Notification(self.client)
         self.DB = DB(self.browser, self.notification)
         self.poller = Puller(self.client, self.client_queue)
-        self.message_manager = MessageHandler(self.client, self.client_queue, self.browser, self.DB)
+        self.message_manager = MessageHandler(self.client, self.client_queue, self.notification, self.browser, self.DB)
+
+        self._boot_up()
 
     def loop(self) -> None:
         """
@@ -33,3 +36,14 @@ class Bot:
             self.notification.start_thread(executor)
             self.poller.start_thread(executor)
             self.message_manager.start_threads(executor, self.threads_n - 2)
+
+    def _boot_up(self):
+        preset = self.DB.get_preset()
+        if preset is None:
+            logger.error('Failed to boot up bot\n'
+                         'Can`t get preset')
+            return
+
+        self.browser.update_photos(preset)
+        self.notification.update_all_notification(preset)
+        logger.info('Successfully loaded all dynamic data')

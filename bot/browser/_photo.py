@@ -11,12 +11,15 @@ from config import root_path
 from log import logger
 
 
-def get_photo(self, group_index: int, preset: DisconSchedule) -> bytes | None:
+def get_photo(self, group_index: int) -> bytes | None:
     with self.photos_lock:
         if not self.photos.get(group_index, 0):
-            if not self.update_photos(preset):
-                logger.warning(f'Failed to get preset photo as it does not yet exist')
-                return
+            logger.warning(f'Failed to get photo of group {group_index}\n'
+                           f'Browser._photo module is not fully initialized'
+                           f'Maybe you forgot to use update_photos on startup xD')
+            return
+        if not self.DB.get_preset()[1]:
+            logger.warning('Generating dynamic data based on outdated data')
 
         logger.info(f'Obtained an image of group {group_index}')
         return self.photos[group_index]
