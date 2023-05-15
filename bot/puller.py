@@ -1,6 +1,6 @@
 import queue
 from concurrent.futures import ThreadPoolExecutor
-from threading import Thread
+from threading import Thread, current_thread
 
 from bot import botAPI
 from log import logger
@@ -12,7 +12,7 @@ class Puller:
         self.client_queue = client_queue
 
     def _puller(self):
-        logger.info("Started")
+        logger.info(f"Puller looping: {current_thread().name}")
         offset = 0
         timeout = 60
         while True:

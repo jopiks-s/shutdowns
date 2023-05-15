@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from bot import db
 from bot.botAPI import response
 from log import logger
@@ -21,7 +23,7 @@ def view_command(self, message: response.Message):
                                                    'You can do this with the command - /setgroup 1-3\n'
                                                    'If you want to look at any group, write the command - /view 1-3')
         else:
-            self.client.send_photo(user.user_id, self.browser.get_photo(user.group), f'Group {group_index}')
+            self.client.send_photo(user.user_id, self.browser.get_photo(user.group), f'Group {user.group}')
 
     if len(message.parameters):
         group_index = message.parameters[0]
@@ -64,7 +66,7 @@ def notification_advance_command(self, message: response.Message):
     user = db.get_user(message.from_.id)
     max_advance = db.User.notification_advance.max_value
     match message.parameters:
-        case (advance, *_) if 0 <= advance <= max_advance:
+        case (advance, *_) if isinstance(advance, int) and 0 <= advance <= max_advance:
             user.notification_advance = advance
             user = user.save()
 
@@ -77,7 +79,7 @@ def notification_advance_command(self, message: response.Message):
             message = f'You send notification advance of "{advance}", but possible only in range 0-{max_advance}'
             self.client.send_message(user.user_id, message)
 
-        case (advance, *_):
+        case (_, *_):
             message = 'Wrong command :<\n' \
                       f'Maybe you meant this: "/notification_advance 0-{max_advance}"\n' \
                       f'Where 0-{max_advance} is notification advance in minutes'
@@ -95,8 +97,20 @@ def info_command(self, message: response.Message):
         message = 'Your group isn`t set yet\n' \
                   'Notification disabled'
     else:
+        date_to_str = timedelta(minutes=user.notification_advance)
+        d = date_to_str.days
+        if d:
+            time = str(date_to_str).split(',')[-1].strip()  # 0:00:00
+            h, m = list(map(int, time.split(':')[0:-1]))  # [0, 0]
+        else:
+            h, m = list(map(int, str(date_to_str).split(':')[0:-1]))  # [0, 0]
+
+        advance = f'{d}d ' if d else ''
+        advance += f'{h:02d}h ' if h else ''
+        advance += f'{m:02d}min' if m else ''
+        advance = '0min' if not advance else advance
         message = f'Your group is {user.group}\n' \
-                  f'Notification advance is {user.notification_advance}min'
+                  f'Notification advance is {advance}'
 
     self.client.send_message(user.user_id, message)
 

@@ -1,13 +1,13 @@
-import json
 import queue
 from concurrent.futures import ThreadPoolExecutor
 
 from bot.botAPI import BotAPI, Commands
+from bot.browser import Browser
+from bot.db import DisconSchedule
+from bot.updater import Updater
 from bot.message_handler import MessageHandler
 from bot.notification import Notification
 from bot.puller import Puller
-from bot.browser import Browser
-from bot.db import DB
 from log import logger
 
 
@@ -21,11 +21,9 @@ class Bot:
 
         self.browser = Browser()
         self.notification = Notification(self.client)
-        self.DB = DB(self.browser, self.notification)
+        self.updater = Updater(1, self.browser, self.notification)
         self.poller = Puller(self.client, self.client_queue)
-        self.message_manager = MessageHandler(self.client, self.client_queue, self.notification, self.browser, self.DB)
-
-        self._boot_up()
+        self.message_manager = MessageHandler(self.client, self.client_queue, self.notification, self.browser)
 
     def loop(self) -> None:
         """
@@ -36,14 +34,3 @@ class Bot:
             self.notification.start_thread(executor)
             self.poller.start_thread(executor)
             self.message_manager.start_threads(executor, self.threads_n - 2)
-
-    def _boot_up(self):
-        preset = self.DB.get_preset()
-        if preset is None:
-            logger.error('Failed to boot up bot\n'
-                         'Can`t get preset')
-            return
-
-        self.browser.update_photos(preset)
-        self.notification.update_all_notification(preset)
-        logger.info('Successfully loaded all dynamic data')

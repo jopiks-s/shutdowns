@@ -2,38 +2,20 @@ import json
 from datetime import datetime
 
 from bs4 import BeautifulSoup
-from mongoengine import ValidationError
 from pytz import timezone
 
 from bot.db.discon_schedule import DisconSchedule
 from log import logger
 
 
-# todo move logic of validating preset to db
-def update_preset(self) -> DisconSchedule | None:
+# todo return None if something bad
+def retrieve_preset(self) -> DisconSchedule | None:
     with self.browser_lock:
+        logger.info('Getting a preset from the server')
         self.browser.get(self.url)
         raw_preset = _discon_txt_to_json(self.browser.page_source)
         db_preset = _preset_mapper(raw_preset)
-
-        try:
-            discon_schedule = DisconSchedule(**db_preset)
-            discon_schedule.validate()
-            DisconSchedule.objects().delete()
-            discon_schedule.save()
-            logger.info('Preset successfully updated')
-            return discon_schedule
-        except ValidationError as e:
-            logger.warning('Failed to update preset')
-            logger.warning('Can`t validate "db_preset" to create "DisconSchedule" object')
-            logger.warning(f'Object to validate: {db_preset=}')
-            logger.warning(f'Exception: {e}')
-            return
-        except Exception as e:
-            logger.warning('Failed to update preset')
-            logger.warning(f'An unexpected exception occurred: {e}')
-            logger.warning(f'Object to validate: {db_preset=}')
-            return
+        return DisconSchedule(**db_preset)
 
 
 def _discon_txt_to_json(page_source: str) -> dict:
@@ -70,5 +52,6 @@ def _preset_mapper(preset: dict) -> dict:
         db_preset['groups'].append({'days': []})
         for days in list(discon_data.values()):
             db_preset['groups'][i]['days'].append({'timetable': list(days.values())})
+
     db_preset['last_update'] = datetime.now(timezone('Europe/Kiev')).replace(tzinfo=None)
     return db_preset

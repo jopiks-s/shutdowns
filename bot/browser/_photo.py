@@ -6,7 +6,9 @@ from PIL import Image
 from pytz import timezone
 from selenium.webdriver.common.by import By
 
-from bot.db.discon_schedule import DisconSchedule, expiration_check
+from bot.updater import fresh, expired
+from bot import updater
+from bot.db.discon_schedule import DisconSchedule
 from config import root_path
 from log import logger
 
@@ -18,7 +20,7 @@ def get_photo(self, group_index: int) -> bytes | None:
                            f'Browser._photo module is not fully initialized'
                            f'Maybe you forgot to use update_photos on startup xD')
             return
-        if not self.DB.get_preset()[1]:
+        if not updater.fresh:
             logger.warning('Generating dynamic data based on outdated data')
 
         logger.info(f'Obtained an image of group {group_index}')
@@ -49,7 +51,7 @@ def _update_preset_htmls(self, preset: DisconSchedule) -> bool:
         column_names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
         row_names = [f'{v:02d}-{(v + 1):02d}' for v in range(24)]
 
-        last_update = 'last_update expired' if expiration_check(preset) else 'last_update'
+        last_update = 'last_update expired' if updater.expired(preset) else 'last_update'
         with open(f'{root_path}/bot/browser/render/html_markup.html', 'r') as f:
             html_markup = ''.join(f.readlines())
 

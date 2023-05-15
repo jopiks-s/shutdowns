@@ -1,9 +1,10 @@
-from datetime import datetime
+from threading import Lock
 
 from mongoengine import *
-from pytz import timezone
 
 from log import logger
+
+preset_lock = Lock()
 
 
 class DisconDay(EmbeddedDocument):
@@ -19,15 +20,11 @@ class DisconSchedule(Document):
     last_update = DateTimeField(required=True)
 
 
-def expiration_check(preset: DisconSchedule) -> bool:
-    now = datetime.now(timezone('Europe/Kiev'))
-    last_update = preset.last_update.replace(tzinfo=timezone('Europe/Kiev'))
-    calculation = now - last_update
-    expired = calculation.days >= 1
-    if expired:
-        expired_log = 'The preset has already expired\n'
-        expired_log += f'{now=}, {last_update=},' \
-                       f'{calculation=}'
-        logger.info(expired_log)
-
-    return expired
+def get_preset() -> DisconSchedule | None:
+    with preset_lock:
+        if len(DisconSchedule.objects) >= 1:
+            if len(DisconSchedule.objects) > 1:
+                logger.warning('Multiple records for DisconSchedule')
+            return DisconSchedule.objects[0]
+        logger.warning('Failed to get preset')
+        return

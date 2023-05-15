@@ -7,7 +7,7 @@ from log import logger
 
 
 class Browser:
-    from ._parser import update_preset
+    from ._parser import retrieve_preset
     from ._photo import get_photo, update_photos, _update_preset_htmls
 
     def __init__(self):
