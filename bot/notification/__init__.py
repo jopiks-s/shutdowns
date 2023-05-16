@@ -29,7 +29,7 @@ class Notification:
         logger.info(f'Notification looping: {current_thread().name}')
         while True:
             schedule.run_pending()
-            time.sleep(60)
+            time.sleep(30)
 
     def start_thread(self, executor: ThreadPoolExecutor):
         executor.submit(Thread(name="notification0", target=self._loop).start)

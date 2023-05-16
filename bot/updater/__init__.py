@@ -1,9 +1,9 @@
 import time
+import traceback
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from threading import Thread, current_thread
 
-import schedule
 from mongoengine import ValidationError
 from pytz import timezone
 
@@ -14,11 +14,13 @@ update_rate = None
 fresh = False
 
 
-# todo this is crap :(, why it even exists?
-def expired(preset: db.DisconSchedule) -> bool | None:
+def expired(preset: db.DisconSchedule) -> bool:
     if update_rate is None:
         logger.warning('Uninitialized Updater class, update_rate not set')
-        return
+        return True
+    if preset is None:
+        logger.warning('Preset is None')
+        return True
 
     now = datetime.now(timezone('Europe/Kiev')).replace(tzinfo=None)
     last_update = preset.last_update
@@ -34,35 +36,42 @@ def expired(preset: db.DisconSchedule) -> bool | None:
 
 
 class Updater:
-    def __init__(self, upd_rate: int, browser, notification):
+    def __init__(self, upd_rate: int, browser, notification, check_rate: int = 15):
         global update_rate
         update_rate = upd_rate
+        self.check_rate = check_rate
         self.browser = browser
         self.notification = notification
 
-        schedule.every(update_rate).days.do(self._update_data)
-        self._update_data(boot_up=True)
+        self._update_data(boot_up=True, debug=True)
 
     def _loop(self):
-        # todo replace schedule with simple sleep
         logger.info(f'Updater looping: {current_thread().name}')
         with True:
-            schedule.run_pending()
-            time.sleep(300)
+            time.sleep(self.check_rate * 60)  # min to sec
+
+            preset = db.get_preset()
+            if expired(preset):
+                self.fresh = False
+                self._update_data()
+                logger.info('Preset updated in a given interval')
+            else:
+                logger.info('Preset still fresh')
 
     def start_thread(self, executor: ThreadPoolExecutor):
         executor.submit(Thread(name="updater0", target=self._loop).start)
 
-    def _update_data(self, boot_up=False):
+    def _update_data(self, boot_up=False, debug=False):
         global fresh
-        new_preset = self._update_preset()
-        if new_preset is None:
-            logger.warning('Failed to update data')
-            fresh = False
-            if boot_up:
-                raise RuntimeError('Unable to initialize data because preset could not be retrieved')
-            return
-
+        if not debug:
+            new_preset = self._update_preset()
+            if new_preset is None:
+                logger.warning('Failed to update data')
+                if boot_up:
+                    raise RuntimeError('Unable to initialize data because preset could not be retrieved')
+                return
+        else:
+            new_preset = db.get_preset()
         fresh = True
         self.browser.update_photos(new_preset)
         self.notification.update_all_notification(new_preset)
@@ -70,6 +79,10 @@ class Updater:
 
     def _update_preset(self) -> db.DisconSchedule | None:
         new_preset = self.browser.retrieve_preset()
+        if new_preset is None:
+            logger.warning('Failed to update preset')
+            return
+
         try:
             new_preset.validate()
             db.DisconSchedule.objects().delete()
@@ -80,5 +93,6 @@ class Updater:
             logger.warning('Failed to update preset\n'
                            'Can`t validate "preset" to create "DisconSchedule" object\n'
                            f'Object to validate: {new_preset.to_json(indent=4)}\n'
-                           f'Exception: {e}')
+                           f'Exception:\n'
+                           f'{traceback.print_exc()}')
             return

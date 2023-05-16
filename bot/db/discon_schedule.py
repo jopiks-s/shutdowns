@@ -26,5 +26,5 @@ def get_preset() -> DisconSchedule | None:
             if len(DisconSchedule.objects) > 1:
                 logger.warning('Multiple records for DisconSchedule')
             return DisconSchedule.objects[0]
-        logger.warning('Failed to get preset')
+        logger.error('No preset in the database')
         return

@@ -41,10 +41,9 @@ def setgroup_command(self, message: response.Message):
         case (1 | 2 | 3 as group, *_):
             user.group = group
             user = user.save()
-            message = 'Your group has been successfully updated!'
 
             self.notification.subscribe_user(user)
-            self.client.send_message(user.user_id, message)
+            self.client.send_message(user.user_id, 'Your group has been successfully updated!')
 
         case (group, *_) if isinstance(group, int):
             message = f'You send group number of "{group}", but possible only in range 1-3'
@@ -69,11 +68,8 @@ def notification_advance_command(self, message: response.Message):
         case (advance, *_) if isinstance(advance, int) and 0 <= advance <= max_advance:
             user.notification_advance = advance
             user = user.save()
-
-            logger.warning('Missing logic to update notifications according to new offset')
-
-            message = 'Your notification advance has been successfully updated!'
-            self.client.send_message(user.user_id, message)
+            self.notification.subscribe_user(user)
+            self.client.send_message(user.user_id, 'Your notification advance has been successfully updated!')
 
         case (advance, *_) if isinstance(advance, int):
             message = f'You send notification advance of "{advance}", but possible only in range 0-{max_advance}'
