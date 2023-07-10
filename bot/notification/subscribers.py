@@ -46,7 +46,7 @@ def subscribe_user(self, user: User, locked=False) -> None:
                 subscription_log[day_index].append([strftime, disc_type, timestamp])
 
                 getattr(schedule.every(), self.weekday[day_index]).at(strftime, 'Europe/Kiev').do(
-                    self._notify, user_id=user.user_id, timestamp=timestamp, disc_type=disc_type, day_i=day_index
+                    self._notify, user=user, timestamp=timestamp, disc_type=disc_type, day_i=day_index
                 ).tag(f'{user.user_id=}')
 
         log = f'User {user.user_id} notification updated\n'

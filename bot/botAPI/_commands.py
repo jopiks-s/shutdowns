@@ -3,13 +3,13 @@ from typing import List
 
 
 class Commands(Enum):
-    start = 'Activate bot'
-    view = 'Show schedule of blackouts'
-    setgroup = 'Set your group index from 1 to 3'
-    notification_advance = 'How far in advance to warn you (in minutes)'
-    info = 'Statistics about your account'
-    help = 'Information help bot'
+    start = 'start'
+    view = 'view (1-3)'
+    setgroup = 'setgroup 1-3'
+    notification_advance = 'advance (0-1440)'
+    info = 'info'
 
     @staticmethod
     def to_json() -> List[dict]:
-        return [{'command': command.name, 'description': command.value} for command in Commands]
+        return [{'command': command.name, 'description': command.value} for
+                command in Commands]

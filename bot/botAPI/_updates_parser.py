@@ -5,6 +5,7 @@ from typing import Type, get_args, Tuple, Any
 
 import dacite
 
+from log import logger
 from . import Commands, response
 
 
@@ -24,7 +25,11 @@ def _add_commands(updates: dict) -> dict:
                 args = [a for a in text.split(' ')[1:] if a]
                 for arg in args:
                     try:
-                        parameters.append(ast.literal_eval(arg))
+                        logger.debug(f'arg: {arg}')
+                        eval_arg = ast.literal_eval(arg)
+                        if eval_arg == Ellipsis:
+                            raise Exception('')
+                        parameters.append(eval_arg)
                     except:
                         parameters.append(arg)
 

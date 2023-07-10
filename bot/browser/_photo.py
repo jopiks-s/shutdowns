@@ -6,7 +6,6 @@ from PIL import Image
 from pytz import timezone
 from selenium.webdriver.common.by import By
 
-from bot.updater import fresh, expired
 from bot import updater
 from bot.db.discon_schedule import DisconSchedule
 from config import root_path
@@ -46,9 +45,11 @@ def update_photos(self, preset: DisconSchedule) -> bool:
         return True
 
 
+# todo add localization
 def _update_preset_htmls(self, preset: DisconSchedule) -> bool:
     with self.htmls_lock:
         column_names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        column_names = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд']
         row_names = [f'{v:02d}-{(v + 1):02d}' for v in range(24)]
 
         last_update = 'last_update expired' if updater.expired(preset) else 'last_update'
@@ -59,8 +60,8 @@ def _update_preset_htmls(self, preset: DisconSchedule) -> bool:
             d = {day: group.days[j].timetable for j, day in enumerate(column_names)}
             df = pandas.DataFrame(d, index=row_names)
             table = df.to_html()
-            with open(f'{root_path}/bot/browser/render/group{i + 1}.html', 'w') as f:
+            with open(f'{root_path}/bot/browser/render/group{i + 1}.html', 'w', encoding='utf-8') as f:
                 f.write(html_markup.format(table=table, last_update=last_update,
-                                           time=preset.last_update.strftime("%d %B, %H:%M:%S")))
+                                           time=preset.last_update.strftime("%Y-%m-%d, %H:%M:%S")))
         logger.info('Htmls successfully updated')
         return True

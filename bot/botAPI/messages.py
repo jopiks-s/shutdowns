@@ -1,10 +1,12 @@
 import gettext
 from enum import Enum
+from threading import Lock
 
 from bot.db.user import User
 from config import root_path
 from . import logger
 
+translation_lock = Lock()
 default_lang = User.language_code.default
 langs = ['uk', 'en']
 languages = {}
@@ -66,21 +68,24 @@ class Messages(Enum):
     info_set = 'Група {group}. Повідомлення за {notification_advance}хв до відключення.'
     info_unset = 'Група не встановлена. Щоб це зробити👇'
 
+    notify_fan = '🔧 Віялове відключення {start}-{end}'
+    notify_stab = '⚡️Стабілізаційне відключення {start}-{end}'
 
-# todo lock, dude :)
+
 def get_translation(msgs: tuple[Messages] | Messages, language_code: str, **kwargs) -> str:
-    if language_code in languages:
-        languages[language_code].install()
-        logger.debug(f'Installed language: {language_code}')
-    else:
-        languages[default_lang].install()
-        logger.debug(f'Didn`t find language: {language_code}\n'
-                     f'Installed default: {default_lang}')
+    with translation_lock:
+        if language_code in languages:
+            languages[language_code].install()
+            logger.debug(f'Installed language: {language_code}')
+        else:
+            languages[default_lang].install()
+            logger.debug(f'Didn`t find language: {language_code}\n'
+                         f'Installed default: {default_lang}')
 
-    if isinstance(msgs, tuple):
-        text = '\n'.join([_(msg.value) for msg in msgs])
-        text = text.format(**kwargs)
-    else:
-        text = _(msgs.value).format(**kwargs)
+        if isinstance(msgs, tuple):
+            text = '\n'.join([_(msg.value) for msg in msgs])
+            text = text.format(**kwargs)
+        else:
+            text = _(msgs.value).format(**kwargs)
 
-    return text
+        return text

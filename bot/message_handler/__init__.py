@@ -17,7 +17,6 @@ class MessageHandler:
     from ._commands_handler import setgroup_command
     from ._commands_handler import notification_advance_command
     from ._commands_handler import info_command
-    from ._commands_handler import help_command
 
     def __init__(self, client: BotAPI, client_queue: queue.Queue, notification: Notification, browser: Browser):
         self.client = client
@@ -31,8 +30,6 @@ class MessageHandler:
             Commands.setgroup: self.setgroup_command,
             Commands.notification_advance: self.notification_advance_command,
             Commands.info: self.info_command,
-            Commands.help: self.help_command,
-
         }
         self.user_locks = defaultdict(threading.Lock)
 

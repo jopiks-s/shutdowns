@@ -23,7 +23,6 @@ class Browser:
 
         options = Options()
         options.add_argument('--headless')
-        options.add_argument('--start-maximized')
         options.add_argument('--force-device-scale-factor=1')
         self.driver = webdriver.Chrome(options=options)
         self.driver.set_window_size(1920, 1080)

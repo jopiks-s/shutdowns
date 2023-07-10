@@ -5,6 +5,7 @@ import config
 request_logger = logging.getLogger(__name__)
 request_logger.setLevel(logging.INFO)
 
+file_handler = logging.FileHandler(f'{config.root_path}/log/logs/requests.log', mode="w", encoding='utf-8')
 file_handler = logging.FileHandler(f'{config.root_path}/log/logs/requests.log', mode="w")
 file_handler.setLevel(logging.INFO)
 file_handler.setFormatter(logging.Formatter(

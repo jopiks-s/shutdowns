@@ -4,7 +4,7 @@ from typing import List
 import requests
 
 from bot.db import User
-from log import logger
+from log import request_logger, logger
 from ._commands import Commands
 from ._get_updates import pack_updates
 from ._updates_parser import ResponseEncoder, ResponseDecoder
@@ -25,9 +25,14 @@ class BotAPI:
         url = self.api_url('sendMessage')
         text = get_translation(msgs, user.language_code, **kwargs)
         payload = {'chat_id': user.user_id, 'text': text, 'parse_mode': 'Markdown'}
-        return requests.post(url, data=payload).json()
+        resp = requests.post(url, data=payload).json()
+        request_logger.info(json.dumps(resp, indent=4))
+        return resp
 
-    def set_my_commands(self, commands: List[dict]):
+    # todo add localization
+    def set_my_commands(self, commands: List[dict]) -> dict:
         url = self.api_url('setMyCommands')
         payload = {'commands': json.dumps(commands)}
-        return requests.post(url, data=payload).json()
+        resp = requests.post(url, data=payload).json()
+        request_logger.info(json.dumps(resp, indent=4))
+        return resp

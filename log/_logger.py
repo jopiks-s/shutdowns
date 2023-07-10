@@ -6,7 +6,7 @@ from log.colorFormatter import ColorFormatter
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-file_handler = logging.FileHandler(f'{config.root_path}/log/logs/app.log', mode="w")
+file_handler = logging.FileHandler(f'{config.root_path}/log/logs/app.log', mode="w", encoding='utf-8')
 file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(logging.Formatter(
     "%(asctime)s %(levelname)s %(threadName)s %(filename)s->%(funcName)s(), line: %(lineno)d; %(message)s",
