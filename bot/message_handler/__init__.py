@@ -42,9 +42,8 @@ class MessageHandler:
             packed_update: response.PackedUpdate = self.client_queue.get()
             with self.user_locks[packed_update.id]:
                 for message in packed_update.messages:
-                    self.client.send_message(message.chat.id,
-                                             f"[DEBUG] Got command: {message.command}, params: {message.parameters}")
                     self.commands[message.command](message)
+                    logger.info(f'Responded on message from {packed_update.id}, text: {message.text}')
 
     def start_threads(self, executor: ThreadPoolExecutor, n):
         """start [n] threads"""

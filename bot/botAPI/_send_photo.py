@@ -4,13 +4,15 @@ from typing import TypeVar
 import requests
 
 from log import request_logger
+from . import Messages, get_translation, User, logger
 
 T = TypeVar('T', bound='BotAPI')
 
 
-def send_photo(self: T, chat_id: str, photo: str | bytes, caption: str = '') -> dict | None:
+def send_photo(self: T, user: User, photo: str | bytes, caption: Messages, **kwargs) -> dict | None:
     url = self.api_url('sendPhoto')
-    payload = {'chat_id': chat_id, 'caption': caption}
+    caption = get_translation(caption, user.language_code, **kwargs)
+    payload = {'chat_id': user.user_id, 'caption': caption}
 
     files = {}
     if isinstance(photo, str):
