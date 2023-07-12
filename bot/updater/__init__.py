@@ -43,7 +43,7 @@ class Updater:
         self.browser = browser
         self.notification = notification
 
-        self._update_data(boot_up=True, debug=True)
+        self._update_data(boot_up=True, debug=False)
 
     def _loop(self):
         logger.info(f'Updater looping: {current_thread().name}')
